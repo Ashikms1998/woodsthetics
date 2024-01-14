@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="dist/output.css">
+</head>
+<body>
+<!-- form -->
+
+    <div class="min-h-screen bg-white flex justify-center items-center">
+
+        <div class="py-12 px-12 bg-white rounded-2xl shadow-xl z-20">
+            <div>
+                <h1 class="text-3xl font-bold text-center mb-4 cursor-pointer">Admin Login</h1>
+                <p class="w-80 text-center text-sm mb-8 font-semibold text-gray-700 tracking-wide cursor-pointer"></p>
+            </div>
+            <form action="/adminlogin" method="post">
+            <div class="space-y-4">
+                <input type="text" id="username" name="username" placeholder="Username" value="Ashik" class="block text-sm py-3 px-4 rounded-lg w-full border outline-none" />
+                <input type="text" id="password" name="password" placeholder="Password" value="123" class="block text-sm py-3 px-4 rounded-lg w-full border outline-none" />
+            </div>
+                <div class="text-center mt-6">
+                    <button class="py-3 w-64 text-xl text-white bg-purple-400 rounded-2xl" type="submit">Login</button>
+                </div>
+            </form>    
+        </div>
+        </div>
+
+    <!-- form -->
+
+</html>

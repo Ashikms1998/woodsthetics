@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="/dist/output.css">
+</head>
+<%-include('admincomponents')%>
+
+  <body>
+    <div class="p-4 sm:ml-64">
+      <div class="p-4 border-2 border-gray-200 dark:border-gray-700 ">
+        <!-- search -->
+        <!-- add product -->
+        <div class="px-10 pt-8 ">
+          <a href="/addproduct"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition duration-300 ease-in-out">
+            ADD PRODUCT +
+              </a>
+        </div>
+        <div class="shadow-lg rounded-lg overflow-hidden mx-4 md:mx-10 pt-11">
+          <table class="w-full table-fixed">
+            <thead>
+              <tr class="bg-gray-100">
+                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">IMAGE</th>
+                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">PRODUCT NAME</th>
+                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">DISCRIPTION</th>
+                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">CATAGORY</th>
+                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">PRICE</th>
+                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">QUANTITY</th>
+                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">BRAND</th>
+                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">ACTION</th>
+                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">UNLIST/LIST</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white">
+              <% productdata.forEach((row, index)=> { %>
+
+                <tr>
+
+                  <td class="py-4 px-6 border-b border-gray-200"> <img src="<%=row.image[0]%>" alt=""> </td>
+                  <td class="py-4 px-6 border-b border-gray-200">
+                    <%=row.productname%>
+                  </td>
+                  <td class="py-4 px-6 border-b border-gray-200">
+                    <%=row.description%>
+                  </td>
+                  <td class="py-4 px-6 border-b border-gray-200">
+                    <%=row.category%>
+                  </td>
+                  <td class="py-4 px-6 border-b border-gray-200">
+                    <%=row.price%>
+                  </td>
+                  <td class="py-4 px-6 border-b border-gray-200">
+                    <%=row.quantity%>
+                  </td>
+                  <td class="py-4 px-6 border-b border-gray-200">
+                    <%=row.brand%>
+                  </td>
+                  <td class="py-4 pl-11 border-b border-gray-200">
+                    <div class="">
+                      <a href="/editproduct/<%=row._id%>" class="text-sm">EDIT</a>
+                    </div>
+                    <div>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button class="blockunblock" data-isblocked="<%=row.id%>">
+                      <%= row.blocked ? 'List' : 'UnList' %>
+                    </button>
+                  </td>
+        </div>
+        </td>
+      </div>
+
+      </td>
+
+      </tr>
+      <%})%>
+        </tbody>
+        </table>
+    </div>
+
+    <script>
+      const deleteButton = document.querySelectorAll(".deleteProduct")
+      deleteButton.forEach((deleteBtn) => {
+        deleteBtn.addEventListener("click", () => {
+          const productId = deleteBtn.getAttribute('data-productId')
+          fetch(`/deleteproduct/${productId}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+          })
+            .then(response => {
+              if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+              }
+              location.reload();
+              return response.json();
+            })
+            .then(data => {
+
+            })
+            .catch(error => {
+              console.log('Error:', error);
+            })
+        });
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+      const button = document.querySelectorAll('.blockunblock')
+      button.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const btnid = btn.getAttribute('data-isblocked')
+          // Show SweetAlert confirmation
+          Swal.fire({
+            title: 'Are you sure?',
+            text: 'This will List/Unlist the product',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, proceed!',
+            cancelButtonText: 'Cancel',
+          }).then((result) => {
+            if (result.isConfirmed) {
+          fetch('/unlistProduct', {
+            method: "POST",
+            headers: {
+              'Content-type': 'application/json'
+            },
+            body: JSON.stringify({ btnid: btnid })
+          })
+            .then((response) => {
+              if (response.ok) {
+                console.log('Successful');
+                return response.json();
+              }
+            }).then((data) => {
+              console.log(data);
+              if (typeof (data.product.blocked) === 'boolean') {
+                if (data.product.blocked) {
+                  btn.textContent = 'List'
+                } else {
+                  btn.textContent = 'Unlist'
+                }
+              } else {
+                console.error('Invalid type for data.product.unlisted:', typeof data.product.unlisted);
+              }
+            })
+            .catch((err) => {
+              console.error('Error:', err);
+            });
+          }
+        })
+      })
+    })
+    </script>
+  
+  </body>
+
+
+</html>

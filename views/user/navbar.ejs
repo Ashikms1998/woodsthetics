@@ -1,0 +1,39 @@
+<div class=" bg-gray-0 ">
+    <!-- Header Menu Center -->
+    <header
+        class="relative top-0 w-full mt-0 text-gray-700 bg-white border-t border-gray-100 shadow-sm body-font min-h-min ">
+        <div class="container flex flex-col items-start justify-between p-6 mx-auto md:flex-row">
+            <a href="/home"
+                class=" flex items-center mb-4 font-extrabold text-gray-900 title-font md:mb-0">WOODSTHETICS</a>
+
+
+            <nav class="flex flex-wrap items-center justify-center pl-20 text-base md:ml-auto md:mr-auto">
+                <a href="/home" class="mr-5 font-medium hover:text-gray-900">Home</a>
+                <a href="/products" class="mr-5 font-medium hover:text-gray-900">Shop</a>
+                <a href="#_" class="font-medium hover:text-gray-900">Contact</a>
+            </nav>
+
+
+            <div class="items-center h-full">
+
+                <% if(!userData){ %>
+                    
+                    <a href="/signup"
+                        class="px-3 py-2 text-xs font-bold text-black uppercase transition-all duration-150 bg-teal-500 rounded shadow outline-none active:bg-red-400 hover:shadow-md focus:outline-none ease">
+                        Sign Up
+                    </a>
+                    <a href="/login" class="ml-3 font-medium hover:text-gray-900">Login</a>
+                    <% }else{ %>
+                        <a href="/wishlist" class="mr-5 hover:text-gray-900">&#10084;</a>
+                        <a href="/cart" class="mr-5 hover:text-gray-900">&#128722;</a>
+                        <a href="/userprofile" class="mr-5 font-medium hover:text-gray-900">Hai <%= userData.name %>
+                        </a>
+                                <a href="/logout"
+                                    class="px-3 py-2 text-xs font-bold text-black uppercase transition-all duration-150 bg-teal-500 rounded shadow outline-none active:bg-red-400 hover:shadow-md focus:outline-none ease">
+                                    Logout
+                                </a>
+                                <% } %>
+            </div>
+        </div>
+</div>
+</header>

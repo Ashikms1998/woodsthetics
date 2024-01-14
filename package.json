@@ -1,0 +1,36 @@
+{
+  "name": "mini-project",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "concurrently \"npx tailwindcss -i ./public/src/input.css -o ./public/dist/output.css --watch\" \"nodemon app.js\""
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "tailwindcss": "^3.3.5"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.2",
+    "concurrently": "^8.2.2",
+    "cookie-parser": "^1.4.6",
+    "cropper": "^4.1.0",
+    "cropperjs": "^1.6.1",
+    "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
+    "express-session": "^1.17.3",
+    "mongoose": "^8.0.1",
+    "multer": "^1.4.5-lts.1",
+    "nocache": "^4.0.0",
+    "node": "^21.1.0",
+    "nodemailer": "^6.9.7",
+    "nodemon": "^3.0.1",
+    "path": "^0.12.7",
+    "punycode": "^2.3.1",
+    "sweetalert2": "^11.10.1",
+    "uuid": "^9.0.1"
+  },
+  "description": ""
+}

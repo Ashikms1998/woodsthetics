@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css"  rel="stylesheet" />
+  <link rel="stylesheet" href="/dist/output.css">
+</head>
+
+
+<body>
+  <%-include('admincomponents')%>
+    <div class="p-4 sm:ml-64">
+      <div class="p-4 border-2 border-gray-200 dark:border-gray-700 ">
+        <!-- search -->
+
+        <div class="shadow-lg rounded-lg overflow-hidden mx-4 md:mx-10 pt-11">
+          <table class="w-full table-fixed">
+            <thead>
+              <tr class="bg-gray-100">
+                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">IMAGE</th>
+                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">PRODUCT NAME</th>
+                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">PAYMENT MODE</th>
+                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">PRICE</th>
+                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">QUANTITY</th>
+                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">SHIPPING ADDRESS</th>
+                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">ACTION</th>
+
+              </tr>
+            </thead>
+            <tbody class="bg-white">
+
+              <% orderDetails.forEach((pro)=>{ %>
+                <% const addresss=addressData.find(item=> item._id.equals(pro.shippingAddress)); %>
+                <% pro.productdetails.forEach(prd=>{ %>
+                  <% let product=productData.find(item=> item._id.equals(prd.productId )) %>
+                  <tr>
+                    <% pro.productdetails.forEach(prd=>{ %>
+                      <% let product=productData.find(item=> item._id.equals(prd.productId )) %>
+                    <td class="py-4 px-6 border-b border-gray-200"> <img src="<%=product.image[0]%>" alt="<%= product.productname %>"> </td>
+                    <%})%>
+                    <td class="py-4 px-6 border-b border-gray-200">
+                      
+                          <%= product.productname %> <br>
+                          
+                    </td>
+                    <td class="py-4 px-6 border-b border-gray-200">
+                      COD
+                    </td>
+                    <td class="py-4 px-6 border-b border-gray-200">
+                      <%=pro.total%>
+                    </td>
+                    <td class="py-4 px-6 border-b border-gray-200">
+                      <%=product.quantity%>
+                    </td>
+                    <td class="py-4 px-6 border-b border-gray-200">
+                      <%=addressData[1].address%>
+                    </td>
+                  </td>
+                  <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                                  <% if (pro.status=='delivered' ) { %>
+                                      <span
+                                          class="text-sm text-green-600 font-light px-6 py-4 whitespace-nowrap">DELIVERED</span>
+                                      <% }else if (pro.status=='cancelled' ) {%>
+                                          <span
+                                              class="text-sm text-red-700 font-light px-6 py-4 whitespace-nowrap">CANCELLED</span>
+                                              <% }else if (pro.status=='Returned' ) {%>
+                                                <span
+                                                    class="text-sm text-red-700 font-light px-6 py-4 whitespace-nowrap">RETURNED</span>
+
+                                          <% }else{ %>
+                                              <select name="status"
+                                                  class="status text-sm text-gray-900 font-medium rounded-lg px-4 py-3 whitespace-nowrap"
+                                                  id="">
+                                                  <option value="pending" data-oid="<%= pro._id %>"
+                                                      <% if (pro.status=='PENDING' ) {%> selected <% }
+                                                       %>
+
+                                                          >Pending</option>
+                                                  <option value="delivered"
+                                                      data-oid="<%= pro._id %>" <%
+                                                      if(pro.status=='delivered' ) {%> selected <% }
+                                                          %>
+                                                          >Delivered</option>
+                                                  <option value="cancelled"
+                                                      data-oid="<%= pro._id %>" <%
+                                                      if(pro.status=='cancelled' ) {%>
+                                                      selected
+                                                      <% } %>
+                                                          >Cancel
+                                                  </option>
+
+                                              </select>
+              <% } %>
+
+              </td>
+    </tr>
+
+                  <%})%>
+                  <% }) %>
+                </tbody>
+                
+              </table>
+            </div>
+          </div>
+        </div>
+        
+        <!-- updation of status -->
+        <script>
+          const select = document.querySelectorAll('.status')
+          select.forEach(item => {
+
+
+              item.addEventListener('change', (event) => {
+                  const status = item.value
+                  const selectedOption = item.options[item.selectedIndex];
+                  const oid=selectedOption.dataset.oid;
+                  fetch('/updateStatus', {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({ status: status, oId:oid}),
+                  })
+                      .then(response => {
+                        response.json()
+                        return window.location.reload()
+                      })
+                      .catch((error) => {
+                          console.error('Error:', error);
+                      });
+
+              })
+          });
+
+      </script>
+        
+    
+</body>
+
+</html>

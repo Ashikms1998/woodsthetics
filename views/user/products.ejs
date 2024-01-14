@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="dist/output.css">
+</head>
+<%-include('navbar')%>
+    <!-- search box -->
+
+
+    <div class="flex justify-center mt-4">
+        <form action="#" method="GET" class="hidden lg:block lg:pl-32">
+            <label for="topbar-search" class="sr-only">Search</label>
+            <div class="mt-1 relative lg:w-64">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <input type="search" name="userSearch" id="userSearch-all"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-cyan-600 focus:border-cyan-600 block w-full pl-10 p-2.5"
+                    placeholder="Search">
+            </div>
+        </form>
+    </div>
+    <div class="flex flex-wrap md:flex-nowrap">
+        <div class="w-full md:w-1/4 p-4">
+
+            <div>
+                <!-- sort by price -->
+
+                <div class="filter-container pl-10">
+                    <label for="priceFilter"
+                        class="form-label flex text-black bg-gray-200 items-center justify-start w-40 py-2 mt-2 text-base font-semibold text-left bg-transparent rounded-lg">Filter
+                        by Price:</label>
+                    <select id="priceFilter"
+                        class="form-label flex text-black bg-gray-200 items-center justify-start w-40 py-2 mt-2 text-base font-semibold text-left bg-transparent rounded-lg"
+                        onchange="filterByPrice()">
+
+                        <option value="lowToHigh"
+                            class="form-label flex text-black bg-gray-200 items-center justify-start w-40 py-2 mt-2 text-base font-semibold text-left bg-transparent rounded-lg"">Low to High</option>
+        <option value="highToLow"
+                            class="form-label flex text-black bg-gray-200 items-center justify-start w-40 py-2 mt-2 text-base font-semibold text-left bg-transparent rounded-lg"">High to Low</option>
+            </select>
+        </div>
+<!-- sort by price ends here -->
+
+<!-- sort by category -->
+<form action=" /products" method="post">
+                            <div class="filter-container pl-10 mt-10">
+                                <label
+                                    class="form-label flex text-black bg-gray-200 items-center justify-start w-40 py-2 mt-2 text-base font-semibold text-left bg-transparent rounded-lg">Filter
+                                    by Price:</label>
+                                <select id="categoryFilter" name="selectOption">
+                                    <option value="all"
+                                        class="form-label flex text-black bg-gray-200 items-center justify-start w-40 py-2 mt-2 text-base font-semibold text-left bg-transparent rounded-lg">
+                                        Select Category</option>
+                                    <% categoryFilter.forEach(category=>{ %>
+                                        <option value="<%=category.categoryname %>"
+                                            class="form-label flex text-black bg-gray-200 items-center justify-start w-40 py-2 mt-2 text-base font-semibold text-left bg-transparent rounded-lg">
+                                            <%= category.categoryname %>
+                                        </option>
+                                        <% }); %>
+                                </select>
+
+                                <div class="flex justify-start mt-5">
+                                    <button type="submit" id="submit"
+                                        class="bg-gray-200 font-bold text-xs py-2 px-2 rounded">Apply</button>
+                                </div>
+                            </div>
+                            </form>
+                            <!-- category sort ends here -->
+                </div>
+            </div>
+            <!-- products listing from Here -->
+            <div class="w-full md:w-3/4 p-4">
+
+                <body>
+                    <section id="Projects"
+                        class="w-fit mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 justify-items-center justify-center gap-y-20 gap-x-24 mt-10 mb-5">
+
+                        <%productData.forEach((product, index)=> {%>
+                            <!-- Grid Section - Starts Here-->
+
+                            <div data-price="<%= product.price %>"
+                                class=" searchable-item-all w-72 bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl">
+                                <a href="/singleproduct/<%=product._id%>">
+                                    <img id="mainImage" src="<%=product.image[0]%>" alt="<%=product.name%>"
+                                        class="h-72 w-72 object-cover rounded-t-xl">
+                                    <div class="px-4 py-3 w-72">
+                                        <span class="text-gray-400 mr-3 uppercase text-xs">
+                                            <%=product.brand%>
+                                        </span>
+                                        <p class="text-lg font-bold text-black truncate block capitalize">
+                                            <%=product.productname%>
+                                        </p>
+                                        <div class="flex items-center">
+                                            <p class="text-lg font-semibold  text-black cursor-auto my-3"
+                                                data-price="<%= product.price %>">Rs.<%= product.price %>
+                                            </p>
+
+
+                                            <div class="ml-auto"><svg xmlns="http://www.w3.org/2000/svg" width="20"
+                                                    height="20" fill="currentColor" class="bi bi-bag-plus"
+                                                    viewBox="0 0 16 16">
+                                                    <path fill-rule="evenodd"
+                                                        d="M8 7.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0v-1.5H6a.5.5 0 0 1 0-1h1.5V8a.5.5 0 0 1 .5-.5z" />
+                                                    <path
+                                                        d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4h-3.5zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z" />
+                                                </svg></div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+
+
+
+                            <%})%>
+
+                    </section>
+
+                    <!-- pagination Starts-->
+
+
+
+                    <div class="flex justify-center mb-5">
+                        <nav aria-label="Page navigation example">
+                            <ul class="inline-flex -space-x-px text-sm">
+                                <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                                    <a href="?page=1" aria-label="First"
+                                        class="page-link flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Previous</a>
+                                </li>
+                                <% for (let i=1; i <=totalPages; i++) { %>
+                                    <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                        <a href="?page=<%= i %>"
+                                            class=" page-link flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                                            <%= i %>
+                                        </a>
+                                    </li>
+                                    <% } %>
+
+                                        <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                                            <a href="?page=<%= totalPages %>" aria-label="Last"
+                                                class="page-link flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</a>
+                                        </li>
+                            </ul>
+                        </nav>
+                    </div>
+
+                    <!-- pagination ends -->
+
+
+                    <div>
+                        <%-include('footer')%>
+                    </div>
+
+                    <script>
+                        kofiWidgetOverlay.draw('mohamedghulam', {
+                            'type': 'floating-chat',
+                            'floating-chat.donateButton.text': 'Support me',
+                            'floating-chat.donateButton.background-color': '#323842',
+                            'floating-chat.donateButton.text-color': '#fff'
+                        });
+
+                    </script>
+                    <script>
+                        function filterByPrice() {
+                            let sortBy = document.getElementById("priceFilter").value;
+                            const elements = [...document.getElementById('Projects').children];
+
+                            let sortedElements = elements.sort(function (a, b) {
+                                let priceA = parseInt(a.dataset.price);
+                                let priceB = parseInt(b.dataset.price);
+                                if (sortBy == "highToLow") {
+
+                                    return priceB - priceA;
+                                } else {
+                                    
+                                    return priceA - priceB;
+                                    
+
+                                }
+                            });
+                            document.getElementById('Projects').replaceChildren(...sortedElements);
+                        }
+
+                        // document.getElementById('priceFilter').addEventListener('change', filterByPrice);
+                    </script>
+
+                    <script>
+
+                        const searchInput = document.getElementById('userSearch-all');
+                        const searchableItems = document.querySelectorAll('.searchable-item-all');
+                        //   const noResultsMessage = document.getElementById('noResultsMessage'); 
+
+                        // Reference to the message element
+
+                        searchInput.addEventListener('input', () => {
+                            const searchText = searchInput.value.toLowerCase();
+                            let found = false; // Flag to check if any matching items are found
+
+                            searchableItems.forEach(item => {
+                                const itemText = item.textContent.toLowerCase();
+
+                                if (itemText.includes(searchText)) {
+                                    item.style.display = 'block';
+                                    found = true; // Set the flag to true if a matching item is found
+                                } else {
+                                    item.style.display = 'none';
+                                }
+                            });
+
+
+                            // noResultsMessage.style.display = found ? 'none' : 'block';
+
+
+                        });
+                    </script>
+                </body>
+            </div>
+        </div>
+
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/dist/output.css">
+    
+</head>
+
+<body>
+    <%-include('navbar')%>
+
+        <div class="bg-gray-100 h-screen py-8">
+            <div class="container mx-auto px-4">
+                <h1 class="text-2xl font-semibold mb-4">Shopping Cart</h1>
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="md:w-3/4">
+                        <div class="bg-white rounded-lg shadow-md p-6 mb-4">
+                            <table class="w-full">
+                                <thead>
+                                    <tr>
+                                        <th class="text-left font-semibold">Product</th>
+                                        <th class="text-center font-semibold">Price</th>
+                                        <th class="text-center font-semibold">Quantity</th>
+                                        <th class="text-center font-semibold">Total</th>
+                                        <th class="text-center font-semibold">Remove</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    <% createCart.products.forEach((row, index)=> { %>
+
+                                        <tr>
+                                            <td class="py-4">
+                                                <div class="flex items-center">
+                                                    <img class="h-16 w-16 mr-4" src="<%=products[index]?.image[0]%>"
+                                                        alt="<%=products[index]?._id%>">
+
+                                                    <span class="font-semibold">
+                                                        <%=products[index].productname%>
+
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td class="py-4">
+                                                <div class="text-center">
+                                                    ₹ <%=products[index].price%>
+                                            </div>    
+                                            </td>
+                                            
+                                            <td class="py-4 text-center">
+                                                <div class="justify-center items-center">
+                                                    <button class="border rounded-md py-2 px-4 mr-2 minus" id="minus"  data-item-id="<%=products[index]._id%>">-</button>
+
+                                                    
+                                                    <span class="text-center w-8 amount" id="amount" data-item-id="<%=products[index]._id%>"><%=row.quantity%></span>
+
+                                                    <button class="border rounded-md py-2 px-4 ml-2 plus" id="plus" data-item-id="<%=products[index] ._id%>">+</button>
+                                                </div>
+                                            </td>
+
+                                            <td class="py-4 text-center">
+                                                ₹ <%=products[index].price*row.quantity%>
+                                            </td>
+
+                                            <td class="py-4 text-center">
+                                                <div class="justify-center items-center">
+                                                    <button
+                                                        class=" deleteProduct border mr-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white py-2 px-4 rounded-full font-bold hover:bg-gray-300 dark:hover:bg-gray-600"
+                                                        data-productId="<%=row._id%>">Remove</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <!-- More product rows -->
+                                        <%})%>
+                                </tbody>
+                            </table>
+
+
+                        </div>
+                    </div>
+
+                    <div class="md:w-1/4">
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h2 class="text-lg font-semibold mb-4">
+                                (<%=createCart.products.length%> Item) in Cart
+                            </h2>
+                            <div class="flex justify-between mb-2">
+                                <span class="font-medium">Subtotal</span>
+                                <span>
+                                    ₹<% let sum=createCart.products.reduce((accumulator, item)=> {
+                                        let product = products.find(product =>{
+                                        return product._id.equals(item.product)});
+                                        return accumulator + product.price * item.quantity; }, 0); %>
+                                        <%= sum %>
+
+                                </span>
+                            </div>
+                            <div class="flex justify-between mb-2">
+                                <span class="font-medium">Shipping</span>
+                                <span class="text-green-500 font-semibold">Free</span>
+                            </div>
+                            <div class="py-6">
+                                <label for="promo" class="font-semibold inline-block mb-3 text-sm uppercase">Promo
+                                    Code</label>
+                                <input type="text" id="promo" placeholder="Enter your code"
+                                    class="p-2 text-sm w-full border border-gray-300 rounded-lg">
+                            </div>
+                            <button
+                                class="bg-red-500 hover:bg-red-600 px-5 py-2 text-sm text-white font-medium rounded-xl">Apply</button>
+                            <hr class="my-2">
+                            <div class="flex justify-between mb-2">
+                                <span class="font-semibold">Total</span>
+                                <span class="font-semibold">₹<%= sum %></span>
+                            </div>
+                            <a href="/checkoutpage"
+                                class="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 w-full">Checkout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <%-include('footer')%> 
+
+            <script src="/js/delete.js">
+                
+            </script>
+
+            <script>
+                let pluses = document.getElementsByClassName('plus');
+                let minuses = document.getElementsByClassName('minus');
+                let amounts = document.getElementsByClassName('amount');
+
+                for(let i=0; i< pluses.length; i++){
+
+                    pluses[i].addEventListener("click",function (){
+                        let itemId = this.dataset.itemId;
+                        amounts[i].innerHTML = parseInt(amounts[i].innerHTML) +1;
+                        let newAmount = parseInt(amounts[i].innerHTML);
+                        fetch('/updateCart',{
+                            method:'POST',
+                            headers:{
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({itemId:itemId, amount:newAmount}),
+                            
+                        })
+                        .then(response => response.json())
+                        .then(data=>{
+                            console.log('Success:', data);
+                            window.location.reload();
+                        })
+                        .catch((error)=>{
+                            window.location.reload();
+                            alert('product out of stock')
+                            console.error('Error:', error);
+                        });
+                        
+                    });
+                        
+                    minuses[i].addEventListener("click", function(){
+                        
+                        if(parseInt(amounts[i].innerHTML) > 1){
+                            
+                            amounts[i].innerHTML = parseInt(amounts[i].innerHTML) -1;
+                        }
+                        minuses[i].style.display = (parseInt(amounts[i].innerHTML)===1)? 'none': 'inline-block';
+
+                            let itemId = this.dataset.itemId;
+                            console.log(itemId);
+                            let newAmount = parseInt(amounts[i].innerHTML);
+
+                            if(newAmount>0){
+                            
+                                fetch('/updateCart',{
+                                    method:'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+
+                                    },
+                                    body:JSON.stringify({itemId: itemId,amount:newAmount}),
+                                })
+                                .then(response => response.json())
+                            .then(data => {
+                            console.log('Success:', data);
+                            })
+                            .catch((error) => {
+                            console.error('Error:', error);
+                            });
+                            window.location.reload();
+                            
+                        }
+                    });
+
+                    minuses[i].style.display = (parseInt(amounts[i].innerHTML)===1)? 'none': 'inline-block';
+                }
+
+            </script>
+</body>
+
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="dist/output.css">
+</head>
+
+<body>
+
+  <%-include('navbar')%>
+    <div class="relative flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-12">
+      <div class="relative bg-white px-6 pt-10 pb-9 shadow-xl mx-auto w-full max-w-lg rounded-2xl">
+        <div class="mx-auto flex w-full max-w-md flex-col space-y-16">
+          <div class="flex flex-col items-center justify-center text-center space-y-2">
+            <div class="font-semibold text-3xl">
+              <p>Email Verification</p>
+            </div>
+            <div class="flex flex-row text-sm font-medium text-gray-400">
+              <p>We have sent a code to your E-mail</p>
+            </div>
+          </div>
+
+          <div>
+            <form action="/otp" method="post">
+
+              <% if(error) { %>
+                <p class="error" style="color: red;">
+                  <%= error %>
+                </p>
+                <%} %>
+
+                  <div class="flex flex-col space-y-16">
+                    <div class="flex flex-row items-center justify-between mx-auto w-full max-w-xs">
+                      <div class="w-16 h-16 ">
+                        <input name="digit1"
+                          class="w-full h-full flex flex-col items-center justify-center text-center px-5 outline-none rounded-xl border border-gray-200 text-lg bg-white focus:bg-gray-50 focus:ring-1 ring-blue-700"
+                          type="text" id="">
+                      </div>
+                      <div class="w-16 h-16 ">
+                        <input name="digit2"
+                          class="w-full h-full flex flex-col items-center justify-center text-center px-5 outline-none rounded-xl border border-gray-200 text-lg bg-white focus:bg-gray-50 focus:ring-1 ring-blue-700"
+                          type="text" id="">
+                      </div>
+                      <div class="w-16 h-16 ">
+                        <input name="digit3"
+                          class="w-full h-full flex flex-col items-center justify-center text-center px-5 outline-none rounded-xl border border-gray-200 text-lg bg-white focus:bg-gray-50 focus:ring-1 ring-blue-700"
+                          type="text" id="">
+                      </div>
+                      <div class="w-16 h-16 ">
+                        <input name="digit4"
+                          class="w-full h-full flex flex-col items-center justify-center text-center px-5 outline-none rounded-xl border border-gray-200 text-lg bg-white focus:bg-gray-50 focus:ring-1 ring-blue-700"
+                          type="text" id="">
+                      </div>
+                    </div>
+                    <div  class="font-bold flex justify-center" id="timer">0:00</div>
+
+                    <div class="flex flex-col space-y-5">
+                      <div>
+                        <button
+                          class="flex flex-row items-center justify-center text-center w-full border rounded-xl outline-none py-5 bg-blue-700 border-none text-white text-sm shadow-sm"
+                          type="submit">
+                          Verify Account
+                        </button>
+                      </div>
+
+                      <div
+                        class="flex flex-row items-center justify-center text-center text-sm font-medium space-x-1 text-gray-500">
+                        <p>Didn't recieve code?</p> <a class="flex flex-row items-center text-blue-600"
+                          href="/resendotp" target="_blank" rel="noopener noreferrer">Resend</a>
+                      </div>
+                    </div>
+                  </div>
+            </form>
+          </div>
+        </div>
+      </div>
+</body>
+
+<script>
+  let timeLeft = 1 * 60; // 1 minute
+
+  const countdown = setInterval(() => {
+    timeLeft -= 1;
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+
+    document.getElementById('timer').innerText = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+
+    if (timeLeft <= 0) {
+      clearInterval(countdown);
+      document.getElementById('timer').innerText = '0:00';
+      // Handle OTP expiration
+      document.getElementById('otp-form').disabled = true;
+      document.getElementById('message').innerText = 'The OTP has expired.Please request a new One.';
+    }
+  }, 1000);
+ </script>
+
+</html>

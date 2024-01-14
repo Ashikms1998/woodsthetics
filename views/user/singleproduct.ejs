@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/dist/output.css">
+</head>
+
+<body>
+
+    <%-include('navbar')%>
+
+        <div class="bg-gray-100 dark:bg-gray-800 py-8">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col md:flex-row -mx-4">
+                    <div class="w-full px-4 mb-8 md:w-1/2 md:mb-0">
+                        <div class="sticky top-0 overflow-hidden ">
+
+                            <!-- main image -->
+                            <div class="relative mb-6 lg:mb-10 lg:h-96">
+                                <img id="mainImage" data-fade-in="css-147n82m"
+                                    class="css-viwop1 object-contain w-full lg:h-full" css-147n82m"
+                                    src="\<%=productDetails.image[0]%>" alt="<%=productDetails.name%>"
+                                    style="object-fit: contain;">
+                            </div>
+
+                            <div class="flex mb-4">
+                                <div class="w-1/2 px-2">
+                                    <a  href="#" 
+                                    class="  w-full bg-gray-900 dark:bg-gray-600 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-800 dark:hover:bg-gray-700 block text-center"
+                                    id="addToCartBtn"
+                                        onclick="toggleCartButtons()">
+                                        Add to Cart
+                                    </a>
+                                    <a href="/cart" data-product-id="<%=productDetails._id%>"
+                                        id="goToCartBtn"
+                                        class=" addToCart hidden w-full bg-gray-900 dark:bg-gray-600 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-800 dark:hover:bg-gray-700 text-center">
+                                        Go to Cart
+                                    </a>
+                                </div>
+
+
+                                <div class="w-1/2 px-2">
+                                    <button
+                                        class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white py-2 px-4 rounded-full font-bold hover:bg-gray-300 dark:hover:bg-gray-600">
+                                        Add to Wishlist
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- rest of the images -->
+                            <div class=" flex-wrap hidden -mx-2 md:flex">
+                                <div class="w-1/2 p-2 sm:w-1/4">
+                                    <a class="block border border-gray-200 hover:border-blue-400 dark:border-gray-700 dark:hover:border-blue-300"
+                                        href="#">
+                                        <img data-fade-in="css-147n82m"
+                                            class="css-viwop1 u-full-width u-full-height css-147n82m"
+                                            src="\<%=productDetails.image[0]%>" alt="<%=productDetails.name%>"
+                                            style="object-fit: contain;"> </a>
+                                    </a>
+                                </div>
+                                <div class="w-1/2 p-2 sm:w-1/4">
+                                    <a class="block border border-gray-200 hover:border-blue-400 dark:border-gray-700 dark:hover:border-blue-300"
+                                        href="#">
+                                        <img data-fade-in="css-147n82m" class=" css-viwop1  css-m5dkrx"
+                                            src="\<%=productDetails.image[1]%>" alt="<%=productDetails.name%>"
+                                            style="object-fit: contain;">
+                                    </a>
+                                </div>
+                                <div class="w-1/2 p-2 sm:w-1/4">
+                                    <a class="block border border-gray-200 hover:border-blue-400 dark:border-gray-700 dark:hover:border-blue-300"
+                                        href="#">
+                                        <img data-fade-in="css-147n82m"
+                                            class="css-viwop1 u-full-width u-full-height css-147n82m"
+                                            src="\<%=productDetails.image[2]%>" alt="<%=productDetails.name%>"
+                                            style="object-fit: contain;"> </a>
+                                    </a>
+                                </div>
+                                <div class="w-1/2 p-2 sm:w-1/4">
+                                    <a class="block border border-gray-200 hover:border-blue-400 dark:border-gray-700 dark:hover:border-blue-300"
+                                        href="#">
+                                        <img data-fade-in="css-147n82m"
+                                            class="css-viwop1 u-full-width u-full-height css-147n82m"
+                                            src="\<%=productDetails.image[3]%>" alt="<%=productDetails.name%>"
+                                            style="object-fit: contain;"> </a>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="md:flex-1 px-4">
+                        <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+                            <%=productDetails.productname%>
+                        </h2>
+                        <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
+                            <%=productDetails.about%>
+                        </p>
+                        <div class="flex mb-4">
+                            <div class="mr-4">
+                                <span class="font-bold text-gray-700 dark:text-gray-300">Price:</span>
+                                <span class="text-gray-600 dark:text-gray-300">Rs.<%=productDetails.price%></span>
+                            </div>
+                            <div>
+                                <span class="font-bold text-gray-700 dark:text-gray-300">Availability:</span>
+                                <span class="text-gray-600 dark:text-gray-300">
+                                    <%=productDetails.availability%>
+                                </span>
+                            </div>
+                        </div>
+
+
+                        <div>
+                            <span class="font-bold text-gray-700 dark:text-gray-300">Product Description:</span>
+                            <p class="text-gray-600 dark:text-gray-300 text-sm mt-2">
+                                <%=productDetails.description%>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <%-include('footer')%>
+            <!-- Zoom link -->
+
+            <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+            <script type="text/javascript"
+                src="https://cdn.rawgit.com/igorlino/elevatezoom-plus/1.1.6/src/jquery.ez-plus.js"></script>
+
+            <!-- For image choosing -->
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    var mainImage = document.getElementById('mainImage');
+                    if (mainImage) {
+                        var thumbnailImages = document.querySelectorAll('.flex-wrap img');
+                        thumbnailImages.forEach(function (thumbnail) {
+                            thumbnail.addEventListener('click', function () {
+                                // Switch main image source to clicked thumbnail
+                                mainImage.src = this.src;
+                                // Call ElevateZoom update function to update zoom on the new image
+                                $(mainImage).ezPlus();
+                            });
+                        });
+                    }
+                }); 
+            </script>
+
+            <!-- zoom script -->
+
+            <!-- <script>
+        var mainImage = document.getElementById('mainImage');
+        $(document).ready(function () {
+            $("#mainImage").ezPlus();
+        });
+    </script> -->
+
+    <script>
+        function toggleCartButtons() {
+            const addToCartBtn = document.getElementById('addToCartBtn');
+            const goToCartBtn = document.getElementById('goToCartBtn');
+    
+            // Toggle visibility
+            addToCartBtn.classList.add('hidden');
+            goToCartBtn.classList.remove('hidden');
+        }
+    </script>
+
+    <script>
+        const addToCart = document.querySelectorAll('.addToCart')
+  addToCart.forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault()
+      const productId = btn.dataset.productId
+      console.log(productId);
+      
+      fetch('/cart', {
+          method: 'POST',
+          redirect: 'follow',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            productId
+          })
+        })
+        .then(res => {
+          if (res.redirected) {
+            const redirectURL = res.url;
+            return window.location.href = redirectURL;
+          } else {
+            return res.json()
+          }
+        })
+        .then(data => {
+          return showToast(data.message)
+        })
+        .catch(err => console.log(err))
+
+    })
+  })
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Product</title>
+  <!-- Add Tailwind CSS CDN link here -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 150vh;
+      margin: 0;
+    }
+
+    .container {
+      width: 70%;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100">
+  <div class="container mx-auto p-10">
+    <h1 class="text-2xl font-semibold mb-4">EDIT PRODUCT</h1>
+
+    <form class="mb-0 space-y-4" action="/editproduct/<%=productdata._id%>" method="post" id="updateForm"
+      enctype="multipart/form-data" onsubmit="return validateForm(event)">
+      <!-- Form fields go here -->
+
+      <label for="category" class="block text-sm font-medium text-gray-600">Product name:</label>
+      <input type="text" id="productname" value="<%=productdata.productname%>" name="productname"
+        class="mt-1 p-2 border border-gray-300 rounded w-full">
+      <div id="nameError" style="color: red;" class="error-message"></div>
+
+      <label for="category" class="block text-sm font-medium text-gray-600">Description:</label>
+      <input type="text" id="description" name="description" value="<%=productdata.description%>"
+        class="mt-1 p-2 border border-gray-300 rounded w-full">
+
+      <label for="category" class="block text-sm font-medium text-gray-600">Category:</label>
+      <select class="form-control mt-1 p-2 border border-gray-300 rounded w-full" id="category" name="category">
+        <option value="" disabled selected>Select a category</option>
+        <% Categorydata.forEach(category=> { %>
+          <option value="<%=category.categoryname %>">
+            <%= category.categoryname %>
+          </option>
+          <% }); %>
+      </select>
+
+      <label for="category" class="block text-sm font-medium text-gray-600">Price:</label>
+      <input type="number" id="price" name="price" value="<%=productdata.price%>"
+        class="mt-1  p-2 border border-gray-300 rounded w-full" oninput="priceValidation(event)">
+      <p id="PriceError"></p>
+      <label for="category" class="block text-sm font-medium text-gray-600">Brand:</label>
+      <input type="text" id="brand" name="brand" value="<%=productdata.brand%>"
+        class="mt-1 p-2 border border-gray-300 rounded w-full">
+
+
+      <label for="description" class="block text-sm font-medium text-gray-600">Quantity:</label>
+      <input type="number" id="quantity" name="quantity" value="<%=productdata.quantity%>"
+        class="mt-1 p-2 border border-gray-300 rounded w-full" oninput="quantityValidation(event)">
+      <p id="QuantityError">
+      </p id>
+
+      <!-- Save button -->
+      <div class="flex items-center justify-center gap-3">
+        <button type="submit" id="saveCategory" class="bg-red-500 font-bold py-2 px-4 rounded">Save</button>
+      </div>
+
+
+      <div class="flex flex-row">
+        <% productdata.image.forEach((element, index)=> { %>
+          <div class="mb-4">
+            <label for="image" class=" block text-sm text-gray-600">Image</label>
+            <img id="imagePreview<%= index %>"
+              class="w-32 pb-3 rounded-lg h-24 md:h-32 flex items-center justify-center" name="Image"
+              src="\<%= element %>" alt="image">
+            <input type="file" data-index='<%=index%>'
+              class="newFile w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              accept="image/*" id="Image<%=index %>" name="image" multiple onchange="previewImage(event,'<%=index %>')">
+          </div>
+          <% }); %>
+      </div>
+      <input type="hidden" name="index" id="AvailableIndex">
+
+    </form>
+  </div>
+
+
+  <script>
+
+    function previewImage(event) {
+      const reader = new FileReader();
+      let currentIndex = event.target.dataset.index;
+      const output = document.getElementById(`imagePreview${currentIndex}`);
+      console.log(output);
+      // Clear previous previews
+      // output.innerHTML = '';
+
+
+      // Iterate through selected files
+      const file = event.target.files[0]
+      console.log(file);
+      // Create a new image element for each file
+      const img = document.createElement('img');
+      img.className = 'preview-image'; // Optional: Add a class for styling
+      reader.onload = function () {
+        output.src = reader.result;
+      };
+      console.log("iimaage", img);
+      reader.readAsDataURL(file);
+
+      // output.appendChild(img);
+    }
+
+  </script>
+
+  <script>
+    function validateForm(e) {
+      return new Promise((resolve, reject) => {
+        let name = document.getElementById("productname").value;
+        let price = Number(document.getElementById("price").value);
+        let quantity = Number(document.getElementById("quantity").value);
+
+        // Reset previous error messages
+        document.getElementById("nameError").innerHTML = "";
+        document.getElementById("PriceError").innerHTML = "";
+        document.getElementById("QuantityError").innerHTML = "";
+
+        // Validate name (only letters and spaces)
+        let nameRegex = /^[a-zA-Z ]+$/;
+        if (!nameRegex.test(name)) {
+          document.getElementById("nameError").innerHTML =
+            "Name should only contain letters and spaces.";
+          reject("Name validation failed");
+        }
+
+        // Validate price (must be greater than 0)
+        if (price < 0) {
+          document.getElementById("PriceError").innerHTML =
+            "Price should not be less than 0";
+          reject("Price validation failed");
+        }
+
+        // Validate quantity (must be greater than 0)
+        if (quantity < 0) {
+          document.getElementById("QuantityError").innerHTML =
+            "Quantity should not be less than 0";
+          reject("Quantity validation failed");
+        }
+
+        resolve(); // Resolve the promise if all validations pass
+      });
+    }
+
+    const formInput = document.getElementById('updateForm');
+
+  </script>
+
+
+
+  <script>
+
+    formInput.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      // Validate the form
+      validateForm()
+        .then(() => {
+          // Validation passed, set indices and submit the form
+          let fileInputs = document.querySelectorAll('.newFile');
+          let indices = [];
+          const AvailableIndex = document.getElementById('AvailableIndex');
+
+          fileInputs.forEach((input) => {
+            if (input.files.length > 0) {
+              indices.push(input.getAttribute('data-index'));
+            }
+          });
+          AvailableIndex.value = indices;
+
+          // Submit the form
+          formInput.submit();
+        })
+        .catch((error) => {
+          console.error('Form validation failed:', error);
+          // Handle validation failure if needed
+        });
+    });
+
+    // function previewImage(event) {
+    //   let currentIndex = event.target.dataset.index;
+    //   console.log('Changed file input at index:', currentIndex);
+    // }
+  </script>
+
+  </script>
+
+</body>
+
+</html>

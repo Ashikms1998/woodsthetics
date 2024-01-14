@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/dist/output.css">
+</head>
+<%-include('admincomponents')%>
+    <!-- component -->
+
+    <body class="bg-slate-300 ">
+        <div class="flex min-h-screen items-center justify-center">
+
+            <form action="/editcategory/<%=categorydata._id%>" method="post" id="submit">
+
+                <% if(errorMessage) { %>
+                    <p class="error" style="color: red;">
+                        <%= errorMessage %>
+                    </p>
+                    <% } %>
+
+                <div class="min-h-1/2 bg-stone-800 border-gray-400 rounded-2xl">
+
+                    <div
+                        class="mx-4 sm:mx-24 md:mx-34 lg:mx-56 flex items-center space-y-4 py-16 font-semibold text-gray-500 flex-col">
+
+                        <h1 class="text-white text-lg mr-36">Edit Category</h1>
+
+
+                        <!-- Error Message for Category Name -->
+                        <span id="categorynameError" class="text-red-500"></span>
+
+
+                        <!-- Category Name Input -->
+                        <input class="w-full p-2 bg-white rounded-md focus:border-blue-700" placeholder=""
+                            value="<%=categorydata.categoryname%>" type="text" name="categoryname" id="categoryname"
+                            required><!-- Add onblur to trigger validation -->
+
+
+
+                        <h1 class="text-white text-lg mr-32">Edit Description</h1>
+
+                        <span id="descriptionError" class="text-red-500"></span>
+                        <!-- Description Input -->
+                        <input class="w-full p-2 bg-white rounded-md" placeholder="" type="text"
+                            value="<%=categorydata.description%>" name="description" id="description" required ">
+                            
+            
+                <div>
+                    <button class=" bg-white font-bold py-1 px-4 rounded active:bg-green-700 hover:shadow-md
+                            text-black" onclick="openEditModal()" type="submit">EDIT</button>
+                    </div>
+
+                </div>
+
+        </div>
+        </form>
+        </div>
+
+        <script>
+            const categorynameInput = document.getElementById('categoryname');
+            const descriptionInput = document.getElementById('description');
+            const categorynameError = document.getElementById('categorynameError');
+            const descriptionError = document.getElementById('descriptionError');
+            const form = document.getElementById("submit");
+            form.addEventListener("submit", (e) => {
+                e.preventDefault();
+                const categoryname = categorynameInput.value;
+                const description = descriptionInput.value;
+                if (/[\d~`!@#$%^&*()_+={}\[\]:;<>,.?/"'\\|[\]]/.test(categoryname)) {
+                    categorynameError.innerText = 'Category Name should not contain numbers, special characters, or spaces.';
+                    return false;
+                }
+
+                if (/[\d~`!@#$%^&*()_+={}\[\]:;<>,.?/"'\\|[\]]/.test(description)) {
+                    descriptionError.innerText = 'Edit Category should not contain numbers, special characters.';
+                    return false;
+                }
+                categorynameError.innerText = '';
+                descriptionError.innerText = '';
+                form.submit()
+            });
+
+        </script>
+
+
+    </body>
+
+</html>
