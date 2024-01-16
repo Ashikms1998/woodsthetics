@@ -10,9 +10,9 @@ const { log } = require('console');
 
 exports.loginGet = (req, res) => {
     if (req.session.adminID) {
-       return res.redirect('/adminhome')
+        return res.redirect('/adminhome')
     }
-   return res.render('admin/adminlogin')
+    return res.render('admin/adminlogin')
 };
 exports.homeGet = (req, res) => {
     res.render('admin/adminhome')
@@ -148,12 +148,12 @@ exports.addcategoryPost = async (req, res) => {
     try {
         const category = req.body.category;
         const newDescription = req.body.description;
-        
+
 
         const existingCategory = await categoryCollection.findOne({ categoryname: category });
         console.log(existingCategory);
         const existingDescription = await categoryCollection.findOne({ description: newDescription })
-       
+
         if (existingCategory) {
             req.session.error = "Category name already exists."
             return res.redirect('back');
@@ -166,10 +166,10 @@ exports.addcategoryPost = async (req, res) => {
                 description: newDescription,
                 blockStatus: false
             })
-            console.log(Categorydata,'scene aan');
+            console.log(Categorydata, 'scene aan');
             await Categorydata.save();
             return res.redirect('/categorymanagement');
-           
+
         }
     } catch (error) {
         console.log("UPDATING CATEGORY ERROR:", error);
@@ -325,9 +325,9 @@ exports.blockedCategoryPost = async (req, res) => {
     try {
 
         const categoryId = req.body;
-        const newCategoryId = categoryId.btnid       
+        const newCategoryId = categoryId.btnid
         const allProduct = await productCollection.find()
-        const categoriesList = allProduct.map(product => product.category);        
+        const categoriesList = allProduct.map(product => product.category);
         const category = await categoryCollection.findById(newCategoryId);
 
 
@@ -358,5 +358,30 @@ exports.logoutadmin = (req, res) => {
         res.redirect('/adminloginget');
     } else {
         res.render("admin/adminlogin", { wrg: "wrong credentials" })
+    }
+};
+
+exports.salesreportGet = async (req, res) => {
+    try {
+        let orderDetails = await orderCollection.aggregate([{
+            $lookup: {
+                from: 'detailslogs',
+                localField: 'userId',
+                foreignField: '_id',
+                as: 'userDetails'
+            }
+        }, {
+            $lookup: {
+                from: 'productcollections',
+                localField: 'productdetails.product',
+                foreignField: '_id',
+                as: 'productDetails'
+            }
+        }, { $unwind: '$userDetails' }])
+        
+
+        res.render('admin/salesreport', { orderDetails })
+    } catch (error) {
+        console.log('Error in sales report get', error);
     }
 }

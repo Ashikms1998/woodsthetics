@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/dist/output.css">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <div>
+        <%-include('admincomponents') %>
+    </div>
+    <div class=" overflow-x-auto shadow-md sm:rounded-lg ml-64 mt-5">
+        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase dark:text-gray-400">
+                <tr>
+                    <th scope="col" class="px-6 py-3 bg-gray-50 dark:bg-gray-800">
+                        Username
+                    </th>
+                    <th scope="col" class="px-6 py-3 bg-gray-50 dark:bg-gray-800">
+                        Product Name
+                    </th>
+                    <th scope="col" class="px-6 py-3 bg-gray-50 dark:bg-gray-800">
+                        Quantity
+                    </th>
+                    <th scope="col" class="px-6 py-3 bg-gray-50 dark:bg-gray-800">
+                        Total
+                    </th>
+                    <th scope="col" class="px-6 py-3 bg-gray-50 dark:bg-gray-800">
+                        Status
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Order Date
+                    </th>
+                    <th scope="col" class="px-6 py-3 bg-gray-50 dark:bg-gray-800">
+                        Address
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        City
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Pincode
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <% orderDetails.forEach((report,i)=>{ %>
+                    <tr class="border-b border-gray-200 dark:border-gray-700">
+                        <th scope="row"
+                            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50 dark:text-white dark:bg-gray-800">
+                            <%=report?.userDetails?.name %>
+                        </th>
+                        <td class="px-6 py-4">
+                            <%report?.productDetails.forEach((ele)=>{%>
+                                <%=ele.productname %>
+                                    <br>
+                                    <%})%>
+                        </td>
+
+                        <td class="px-6 py-4 bg-gray-50 dark:bg-gray-800">
+                            <%report?.productdetails.forEach((ele)=>{%>
+                                x <%=ele.quantity %>
+                                    <br>
+                                    <%})%>
+                        </td>
+                        <td class="px-6 py-4">
+                            <%=report.total %>
+                        </td>
+                        <td class="px-6 py-4 bg-gray-50 dark:bg-gray-800">
+                            <%=report.status %>
+                        </td>
+                        <td class="px-6 py-4">
+                            <%= report.createdAt.toISOString().split('T')[0] %>
+                        </td>
+                        <td class="px-6 py-4 bg-gray-50 dark:bg-gray-800">
+                            <%=report?.address?.address %>
+                        </td>
+                        <td class="px-6 py-4">
+                            <%=report?.address?.city %>
+                        </td>
+                        <td class="px-6 py-4 bg-gray-50 dark:bg-gray-800">
+                            <%=report?.address?.postalCode %>
+                        </td>
+                    </tr>
+                    <% }); %>
+            </tbody>
+        </table>
+    </div>
+
+</body>
+
+</html>

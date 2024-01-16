@@ -3,41 +3,64 @@ const router = express.Router();
 const session = require("../middleware/usersession")
 const  isblock = require("../middleware/userauth");
 
-const {updatecartPost, loginGet, signupGet, homeGet, productsGet,loginPost, otpGet, otpPost, signupPost, verificationGet, singleproductGet, logoutGet, resendGet, cartGet,cartPost,wishlistGet,emptycartGet,deletecartproductPost,checkoutpageGet,userprofilePost,userprofileGet,confirmationPost,orderplacedGet,cancelOrderPost,edituserPost,editaddressPost,deleteaddressPost,forgotpasswordGet,forgotpasswordPost,updatepassword,returnOrderPost,orderPageGet } = require('../controller/userController');
+//User Controller
 
+const {homeGet, productsGet, singleproductGet,wishlistGet,userprofilePost,userprofileGet,edituserPost,editaddressPost,deleteaddressPost } = require('../controller/userController');
+
+//Login Controller
+const{loginGet,loginPost,otpGet,otpPost,resendGet,signupGet,signupPost,verificationGet,forgotpasswordGet,forgotpasswordPost,updatepassword,logoutGet}=require('../controller/loginController')
+
+//Cart Controller
+const{cartGet,emptycartGet,cartPost,updatecartPost,deletecartproductPost} = require('../controller/cartController')
+
+//Order Controller
+const{orderPageGet,confirmationPost,checkoutpageGet,cancelOrderPost,orderplacedGet,returnOrderPost} = require('../controller/orderController')
+
+//Login Controller Routes
 
 router.get('/login', loginGet)
+router.post('/',isblock, loginPost);
 router.get('/otp', otpGet)
+router.post('/otp', otpPost);
+router.get('/resendotp', resendGet);
 router.get('/signup', signupGet);
-router.get('/home', homeGet);
+router.post('/signup', signupPost);
 router.get('/otpsuccess', verificationGet);
-router.all('/products', productsGet);
+router.get('/forgotpassword',forgotpasswordGet);
+router.post('/forgotpassword',forgotpasswordPost);
+router.post('/updatepassword',updatepassword);
 router.get('/logout', logoutGet);
+
+
+// Cart Controller
+
+router.get('/cart', session,isblock, cartGet);
+router.post('/cart', cartPost);
+router.get('/emptycart', session,isblock,emptycartGet);
+router.post('/updateCart' ,updatecartPost);
+router.post('/deletecartproduct',deletecartproductPost);
+
+//Order Controller
+
+router.get('/orderPage/:id',orderPageGet)
+router.post('/confirmation',confirmationPost)
+router.get('/checkoutpage', session,isblock,checkoutpageGet);
+router.post('/cancelOrder',cancelOrderPost)
+router.get('/orderplaced', session,isblock,orderplacedGet)
+router.post('/returnOrder',returnOrderPost)
+
+//User Controller Routes
+
+router.get('/home', homeGet);
+router.all('/products', productsGet);
 router.get('/singleproduct/:id', singleproductGet);
 router.get('/wishlist', session,isblock,wishlistGet);
-router.get('/checkoutpage', session,isblock,checkoutpageGet);
 router.get('/userprofile',isblock,userprofileGet);
-router.get('/forgotpassword',forgotpasswordGet);
-router.get('/resendotp', resendGet);
-router.get('/cart', session,isblock, cartGet);
-router.get('/orderplaced', session,isblock,orderplacedGet)
-router.post('/cart', cartPost);
 router.post('/userprofile',userprofilePost);
-router.get('/emptycart', session,isblock,emptycartGet);
-router.get('/orderPage/:id',orderPageGet)
-router.post('/',isblock, loginPost);
-router.post('/updateCart' ,updatecartPost);
-router.post('/signup', signupPost);
-router.post('/otp', otpPost);
-router.post('/deletecartproduct',deletecartproductPost);
-router.post('/confirmation',confirmationPost)
-router.post('/cancelOrder',cancelOrderPost)
 router.post('/edituser/:id', edituserPost);
 router.post('/editaddress/:id',editaddressPost);
 router.post('/deleteaddress/:id',deleteaddressPost);
-router.post('/forgotpassword',forgotpasswordPost);
-router.post('/updatepassword',updatepassword);
 router.get('/',(req,res)=>res.redirect('/home'))
-router.post('/returnOrder',returnOrderPost)
+
 
 module.exports = router;

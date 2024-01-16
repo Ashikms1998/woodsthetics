@@ -945,3 +945,18 @@ function validateForm(e) {
 </body>
 
 </html>
+
+
+
+
+
+<td><%= report.username %></td>
+                    <td><%= report.products[0].productName %></td>
+                    <td><%= report.products[0].quantity %></td>
+                    <td>₹<%= report.products[0].price.toFixed(2) %></td>
+                    <td><%= report.orderStatus %></td>
+                    <td><%= report.orderDate.toISOString().split('T')[0] %></td>
+                    <td><%= report.address.address %></td>
+                    <td><%= report.address.city %></td>
+                    <td><%= report.address.pincode %></td>
+                    <td><%= report.address.phone %></td>

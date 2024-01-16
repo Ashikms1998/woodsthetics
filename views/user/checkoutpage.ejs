@@ -79,12 +79,59 @@
                         Add Address
                     </a>
                 </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-14 p-2 mt-8">
+                    <% addresses.addressCollection.forEach(function(address) { %>
+                        <div class="bg-white overflow-hidden shadow rounded-lg border">
+
+                            <div class="px-2 py-5 sm:px-6 font-bold">
+                                <input id="default-radio-12" type="radio" value="" name="default-radio-12"
+                                    data-address="<%= address.address %>" data-city="<%= address.city %>"
+                                    data-state="<%= address.state %>" data-postalcode="<%= address.postalcode %>"
+                                    data-country="<%= address.country %>"
+                                    class="w-4 h-4 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 text-lg leading-6 font-bold text-black"
+                                    checked>
+                                Address
+                            </div>
+                            <div class=" border-t border-gray-200 px-4 py-5 sm:p-0">
+                                <dl class="sm:divide-y sm:divide-gray-200">
+                                    <div class="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:px-6">
+                                        <dt class="text-sm font-medium text-gray-500">
+                                            Address
+                                        </dt>
+                                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                            <%= address.address %><br>
+                                                <%= address.city %>, <%= address.state %><br>
+                                                        <%= address.postalcode %><br>
+                                                            <%= address.country %>
+                                        </dd>
+                                    </div>
+                                </dl>
+                            </div>
+                            <div class="py-3 sm:py-5 sm:grid sm:grid-cols-3  sm:px-6">
+                                <dt class="text-sm font-medium text-gray-500">
+                                    Actions
+                                </dt>
+                                <dd class="mt-1 text-sm font-bold text-black sm:mt-0  sm:col-span-2">
+                                    <button class="btn btn-primary sm:gap-16">EDIT</button>
+                                    <!-- Delete Form -->
+                                    <form action="/deleteaddress/<%= address._id %>" method="post">
+                                        <input type="hidden" name="deleteId">
+                                        <button type="submit" class="btn btn-danger">DELETE</button>
+                                    </form>
+                                </dd>
+                            </div>
+                        </div>
+                        <% }) %>
+                </div>
             </div>
 
             <div class="col-span-1 bg-white lg:block hidden ">
                 <h1 class="py-6 border-b-2 text-xl text-black px-8">Order Summary</h1>
                 <%checkoutItems.forEach((row,index)=> { %>
-                    <p id="productId" class="hidden"><%=checkoutItems[index]._id %></p>
+                    <p id="productId" class="hidden">
+                        <%=checkoutItems[index]._id %>
+                    </p>
                     <ul class="py-6 border-b  px-8">
                         <li class="grid grid-cols-6 gap-2 border-b-1">
                             <div class="col-span-1 self-center">
@@ -101,7 +148,9 @@
                             </div>
                             <div class="col-span-2 pt-3">
                                 <div class="flex items-center space-x-2 text-sm justify-between">
-                                    <p id="orderQuantity" class="hidden"><%=checkoutQuantity[index]%></p>
+                                    <p id="orderQuantity" class="hidden">
+                                        <%=checkoutQuantity[index]%>
+                                    </p>
                                     <span class="text-black">
                                         <%=checkoutQuantity[index]%> x ₹<%=checkoutItems[index].price%>
                                     </span>
@@ -134,67 +183,52 @@
                                     <span id="orderTotal">₹<%=total%></span>
                             </div>
 
-                            <a href=/orderplaced class="confirmOrder flex justify-center submit-button px-3 py-3 rounded-md bg-black text-white focus:ring focus:outline-none w-full text-lg font-semibold transition-colors"
-                                style="margin: top 10px; margin-bottom: 10px;">
-                                Place Order
-                        </a>
+                            <p class="text-xl font-medium py-6 border-b-2  text-black px-8">Payment Details</p>
+                            <p class="text-gray-400 py-6 border-b-2 px-8">Complete your order by providing your payment
+                                details.</p>
+                            <div class="py-6 border-b-2 px-8">
+                                <label for="paymentMode" class="mt-4 mb-2 block text-lg font-medium">Payment
+                                    mode</label>
+                                <div class="relative">
+                                    <div>
+                                        <input type="radio" value="UPI" class=" rounded-md  py-4  text-sm   focus:z-10 "
+                                            name="paymentMode">
+                                        <span>UPI/OTHER</span>
+                                    </div>
+
+                                    <div class="flex justify-between">
+                                        <div>
+                                            <input type="radio" value="Wallet"
+                                                class=" rounded-md  py-4  text-sm   focus:z-10 " name="paymentMode">
+                                            <span>Wallet</span>
+                                        </div>
+                                        <p> Wallet Balance : <span id="walletBalance"></span>
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <input type="radio" value="COD" class=" rounded-md  py-4  text-sm   focus:z-10 "
+                                            name="paymentMode" checked>
+                                        <span>COD</span>
+                                    </div>
+                                </div>
+
+                                <a href=/orderplaced
+                                    class="confirmOrder mt-5 flex justify-center submit-button px-3 py-3 rounded-md bg-black text-white focus:ring focus:outline-none w-full text-lg font-semibold transition-colors"
+                                    style="margin: top 10px; margin-bottom: 10px;">
+                                    Place Order
+                                </a>
+
+                            </div>
 
             </div>
-
-
-
         </div>
+            <div>
+                <%-include('footer')%>
+            </div>
 
-
-
-        <!-- address part -->
-
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-14 p-2 mt-8">
-            <% addresses.addressCollection.forEach(function(address) { %>
-                <div class="bg-white overflow-hidden shadow rounded-lg border">
-
-                    <div class="px-2 py-5 sm:px-6 font-bold">
-                        <input id="default-radio-12" type="radio" value="" name="default-radio-12"
-                            data-address="<%= address.address %>" data-city="<%= address.city %>"
-                            data-state="<%= address.state %>" data-postalcode="<%= address.postalcode %>"
-                            data-country="<%= address.country %>"
-                            class="w-4 h-4 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 text-lg leading-6 font-bold text-black" checked>
-                        Address
-                </div>
-                <div class=" border-t border-gray-200 px-4 py-5 sm:p-0">
-                        <dl class="sm:divide-y sm:divide-gray-200">
-                            <div class="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:px-6">
-                                <dt class="text-sm font-medium text-gray-500">
-                                    Address
-                                </dt>
-                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                    <%= address.address %><br>
-                                        <%= address.city %>, <%= address.state %><br>
-                                                <%= address.postalcode %><br>
-                                                    <%= address.country %>
-                                </dd>
-                            </div>
-                        </dl>
-                    </div>
-                    <div class="py-3 sm:py-5 sm:grid sm:grid-cols-3  sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500">
-                            Actions
-                        </dt>
-                        <dd class="mt-1 text-sm font-bold text-black sm:mt-0  sm:col-span-2">
-                            <button class="btn btn-primary sm:gap-16">EDIT</button>
-                            <!-- Delete Form -->
-                            <form action="/deleteaddress/<%= address._id %>" method="post">
-                                <input type="hidden" name="deleteId">
-                                <button type="submit" class="btn btn-danger">DELETE</button>
-                            </form>
-                        </dd>
-                    </div>
-                </div>
-                <% }) %>
-        </div>
-
-        <%-include('footer')%>
 </body>
+
+<!-- Cash On Delivery Script-->
 
 <script>
 
@@ -203,9 +237,9 @@
         confirmOrder()
     })
     function confirmOrder() {
-        
+
         const selectedRadio = document.querySelector('input[name="default-radio-12"]:checked');
-      
+
         let selectedAddressData = null;
         if (selectedRadio) {
 
@@ -222,15 +256,10 @@
             return; // Stop the function if no address is selected
         }
         console.log('Selected Address Data11:', selectedAddressData);
-        // const quantity = document.getElementById('orderQuantity').innerText
-        // console.log(quantity, "ithan quantity");
-        // const orderTotal = document.getElementById('orderTotal').innerText.split("₹")[1].trim()
-        // console.log(orderTotal, 'ithan order total');
-        // const productId = document.getElementById('productId').innerText
         const orderDetails = {
             selectedAddressData,
         };
-       
+
         fetch('/confirmation', {
             method: 'POST',
             headers: {
@@ -254,6 +283,8 @@
             })
     }
 </script>
+
+<!-- Cash On Delivery Script End-->
 
 <script>
     document.getElementById('addAddressBtn').addEventListener('click', function (event) {
