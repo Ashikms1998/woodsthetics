@@ -14,7 +14,7 @@ const{loginGet,loginPost,otpGet,otpPost,resendGet,signupGet,signupPost,verificat
 const{cartGet,emptycartGet,cartPost,updatecartPost,deletecartproductPost} = require('../controller/cartController')
 
 //Order Controller
-const{orderPageGet,confirmationPost,checkoutpageGet,cancelOrderPost,orderplacedGet,returnOrderPost} = require('../controller/orderController')
+const{orderPageGet,confirmationPost,checkoutpageGet,cancelOrderPost,orderplacedGet,returnOrderPost,razorpayPost} = require('../controller/orderController')
 
 //Login Controller Routes
 
@@ -48,6 +48,7 @@ router.get('/checkoutpage', session,isblock,checkoutpageGet);
 router.post('/cancelOrder',cancelOrderPost)
 router.get('/orderplaced', session,isblock,orderplacedGet)
 router.post('/returnOrder',returnOrderPost)
+router.post('/razorpay',razorpayPost);
 
 //User Controller Routes
 

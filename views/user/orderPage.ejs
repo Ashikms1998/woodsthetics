@@ -57,21 +57,6 @@
             </p>
             <div>
   
-  
-  
-              <p class="text-xl font-semibold">
-                <% if (order.status!='cancelled' && order.status!='delivered' ) { %>
-                  <button data-oid="<%= products._id %>" id="btn" data-modal="openModal"
-                    class="modal text-red-700  px-6 py-4 whitespace-nowrap">CANCEL
-                    ORDER
-                  </button>
-                  <% } else{%>
-                    <button data-oid="<%= products._id %>" id="btn"
-                      class="modal text-red-700  px-6 py-4 whitespace-nowrap">
-                    </button>
-                    <% } %>
-              </p>
-  
             </div>
           </div>
         </div>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<link rel="stylesheet" href="/dist/output.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script> -->
+    <title>Document</title>
+</head>
+<body>
+    <%-include('admincomponents')%>
+    <div class="flex justify-center">
+        <section class="mt-16 flex flex-row justify-around gap-7 mx-20">
+            
+            <div class="w-4/12 flex m-auto">
+              <canvas id="mySales-1"></canvas>
+            </div>
+            
+      
+            <div class="w-4/12 flex m-auto">
+              <canvas id="mySales-2"></canvas>
+            </div>
+
+            <div class="w-4/12 flex m-auto">
+                <canvas id="mySales-3"></canvas>
+              </div>
+           </section>
+      
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+   
+        <script>
+
+
+const LastWeekChartOrder=document.getElementById('mySales-1')
+
+
+const LastMonthChartOrder=document.getElementById('mySales-2')
+
+
+const HourlysalesChartDisplay=document.getElementById('mySales-3')
+
+
+
+
+
+async function fetchSevenData() {
+  try {
+    const response = await fetch('/admindashboard/Weeklyreport');
+    const data = await response.json();
+    console.log(data);
+
+    if(data){
+      
+    const xValues =['','','','','','','',]; 
+const yValues =[0,0,0,0,0,0,0];  
+const barColors = ["red", "green","blue","orange","brown"];
+data.dailyData.map((item,index)=>yValues[index]=item.totalPrice)
+
+data.dailyData.map((item,index)=>xValues[index]=item.date)
+
+console.log(xValues,"my last week date");
+console.log(yValues,"my total price");
+new Chart(LastWeekChartOrder, {
+  type: "bar",
+  data: {
+    labels: xValues,
+    datasets: [{
+      label:'Last 7 Days Revenue',
+      backgroundColor: barColors,
+      data: yValues
+    }]
+  },
+  options: {  
+    legend: {display: false},
+    title: {
+      display: true,
+      text: "Monthly Sales Data"
+    }
+  }
+});
+
+
+    }
+
+    // Extract data from the JSON response
+   
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+}
+
+fetchSevenData();
+
+        </script>
+
+
+<script>
+
+  
+
+    //FETCH THIRTY DAYS LAST
+    
+    
+    
+    async function fetchThirtyData() {
+    
+      const montlsalesChartDisplay=document.getElementById('mySales-2')
+      try {
+        const response = await fetch('/admindashboard/Monthlyreport');
+        const data = await response.json();
+    
+        if(data){
+        console.log(data.dailyData,":it ok");
+    
+    const xValues = [];
+    const yValues =[];
+    const barColors = ["red", "green","blue","orange","brown"];
+     data.dailyData.forEach((item) => {
+      yValues.push(item.totalPrice);
+      xValues.push(item.date)
+      
+     });
+    console.log(xValues,"my last week date");
+    console.log(yValues,"my total price");
+    
+
+    
+    new Chart(montlsalesChartDisplay, {
+      type: "bar",
+      data: {
+        labels: xValues,
+        datasets: [{
+          label:'Last 30 Days Revenue',
+          backgroundColor: barColors,
+          data: yValues
+        }]
+      },
+      options: {
+        legend: {display: false},
+        title: {
+          display: true,
+          text: "Monthly Sales Data"
+        }
+      }
+    });
+    
+    
+        }
+    
+        // Extract data from the JSON response
+       
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+    
+    
+    
+    
+    
+    fetchThirtyData()
+    </script>
+
+    <SCRIpt>
+         async function dailydataChart(){
+       
+  try {
+    const response = await fetch('/admindashboard/dailyreport');
+        const data = await response.json();
+    
+        if(data){
+        console.log(data.HourlyData,":it ok hourly");
+
+        const xValues =['','','','','','','',]; 
+const yValues =[0,0,0,0,0,0,0];  
+    const barColors = ["red", "green","blue","orange","brown"];
+     data.HourlyData.forEach((item) => {
+      yValues.push(item.totalPrice);
+      xValues.push(item.date)
+      
+     });
+     console.log(xValues,"my last week date");
+    console.log(yValues,"my total price");
+    
+
+    
+    new Chart(HourlysalesChartDisplay, {
+      type: "bar",
+      data: {
+        labels: xValues,
+        datasets: [{
+          label:'Hourly Revenue',
+          backgroundColor: barColors,
+          data: yValues
+        }]
+      },
+      options: {
+        legend: {display: false},
+        title: {
+          display: true,
+          text: "hourly Sales Data"
+        }
+      }
+    });
+
+         }
+  } catch (error) {
+    console.log(error,'fetching hourly data from controller');
+  }
+
+        }
+
+        dailydataChart()
+    </SCRIpt>
+</body>
+</html>

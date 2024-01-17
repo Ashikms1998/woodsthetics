@@ -36,7 +36,7 @@ const upload = multer({ storage: storage });
 
 // const multerB = require('multer');
 
-const { loginGet, loginPost, logoutadmin, userGet, categoryGet, addcategoryPost, productmanagementGet, addproductGet, productadd, blockUser, editproductGet, editproductPost, homeGet, editcategoryGet, editcategoryPost, deleteproductGet, orderGet, updateStatusPost, blockProductPost, blockedCategoryPost, salesreportGet } = require('../controller/adminController');
+const { loginGet, loginPost, logoutadmin, userGet, categoryGet, addcategoryPost, productmanagementGet, addproductGet, productadd, blockUser, editproductGet, editproductPost, homeGet, editcategoryGet, editcategoryPost, deleteproductGet, orderGet, updateStatusPost, blockProductPost, blockedCategoryPost, salesreportGet,admindash ,admindashboardGetWeekly,thirtyDayChart,dailyChart} = require('../controller/adminController');
 
 
 
@@ -52,6 +52,12 @@ router.get('/editcategory/:_id', adminsession, editcategoryGet);
 router.get('/blockStatus', adminsession, blockUser)
 router.get('/ordermanagement', adminsession, orderGet)
 router.get('/salesreport',adminsession,salesreportGet)
+router.get('/admindashboard',adminsession,admindash)
+router.get('/admindashboard/Weeklyreport',adminsession,admindashboardGetWeekly)
+router.get('/admindashboard/Monthlyreport',adminsession,thirtyDayChart)
+router.get('/admindashboard/dailyreport',adminsession,dailyChart)
+
+
 
 // post
 router.post('/adminlogin', loginPost);

@@ -1,5 +1,6 @@
 const { logDetails } = require('../model/userModel');
 const bcrypt = require('bcrypt');
+const moment = require('moment')
 const { categoryCollection } = require('../model/categoryDB');
 const { productCollection } = require('../model/productDB')
 const { addressCollection } = require('../model/addressDB')
@@ -10,12 +11,12 @@ const { log } = require('console');
 
 exports.loginGet = (req, res) => {
     if (req.session.adminID) {
-        return res.redirect('/adminhome')
+        return res.redirect('/admindashboard')
     }
     return res.render('admin/adminlogin')
 };
 exports.homeGet = (req, res) => {
-    res.render('admin/adminhome')
+    res.render('admin/admindashboard')
 };
 
 
@@ -135,7 +136,7 @@ exports.loginPost = (req, res) => {
     if (admindata.adminName == username && admindata.passcode == password) {
         req.session.adminID = true;
         console.log(req.session.adminID);
-        res.render('admin/adminhome');
+        res.render('admin/admindashboard');
     } else {
         res.render("admin/adminlogin", { wrg: "wrong credentials" })
     }
@@ -324,12 +325,27 @@ exports.blockedCategoryPost = async (req, res) => {
 
     try {
 
-        const categoryId = req.body;
-        const newCategoryId = categoryId.btnid
-        const allProduct = await productCollection.find()
-        const categoriesList = allProduct.map(product => product.category);
-        const category = await categoryCollection.findById(newCategoryId);
+        const categoryId  = req.body.btnid;
+        console.log('thisi is cid',categoryId);
+        const category = await categoryCollection.findById(categoryId);
 
+
+
+        let categoryName = category.categoryname
+        console.log('this is the categotry name', categoryName);
+        // let result = await productCollection.find({category:categoryName})
+        if(!category.blockStatus){
+            result=await productCollection.updateMany({category:categoryName},{$set:{blocked:true}})
+        }else{
+            result=await productCollection.updateMany({category:categoryName},{$set:{blocked:false}})
+        }
+
+        
+        // result.forEach((prod)=>{
+        //     prod.blocked=true
+        // })
+        // await result.save()
+        console.log("the blocked list",result);
 
         if (!category) {
             return res.status(404).send('product not found');
@@ -361,27 +377,365 @@ exports.logoutadmin = (req, res) => {
     }
 };
 
+
 exports.salesreportGet = async (req, res) => {
     try {
-        let orderDetails = await orderCollection.aggregate([{
-            $lookup: {
-                from: 'detailslogs',
-                localField: 'userId',
-                foreignField: '_id',
-                as: 'userDetails'
-            }
-        }, {
-            $lookup: {
-                from: 'productcollections',
-                localField: 'productdetails.product',
-                foreignField: '_id',
-                as: 'productDetails'
-            }
-        }, { $unwind: '$userDetails' }])
-        
+
+        const selectedReport = req.query.type || 'default';
+        console.log(selectedReport, 'dhaande');
+        let orderDetails;
+
+        if (selectedReport === 'daily') {
+
+            const startOfToday = new Date();
+            startOfToday.setHours(0, 0, 0, 0);
+
+            const endOfToday = new Date(startOfToday);
+            endOfToday.setHours(23, 59, 59, 999);
+
+            orderDetails = await orderCollection.aggregate([
+                {
+                    $match: {
+                        createdAt: {
+                            $gte: startOfToday,
+                            $lte: endOfToday
+                        }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'detailslogs',
+                        localField: 'userId',
+                        foreignField: '_id',
+                        as: 'userDetails'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'productcollections',
+                        localField: 'productdetails.product',
+                        foreignField: '_id',
+                        as: 'productDetails'
+                    }
+                },
+                { $unwind: '$userDetails' }
+                // Add any additional stages as necessary for your report
+            ]);
+
+        } else if (selectedReport === 'weekly') {
+
+            const startOfWeek = new Date();
+            startOfWeek.setHours(0, 0, 0, 0);
+            startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+
+            const endOfWeek = new Date();
+            endOfWeek.setHours(23, 59, 59, 999);
+            endOfWeek.setDate(startOfWeek.getDate() + 6 - startOfWeek.getDay());
+
+            orderDetails = await orderCollection.aggregate([
+                {
+                    $match: {
+                        createdAt: {
+                            $gte: startOfWeek,
+                            $lte: endOfWeek
+                        }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'detailslogs',
+                        localField: 'userId',
+                        foreignField: '_id',
+                        as: 'userDetails'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'productcollections',
+                        localField: 'productdetails.product',
+                        foreignField: '_id',
+                        as: 'productDetails'
+                    }
+                },
+                { $unwind: '$userDetails' }
+            ]);
+
+
+
+        } else if (selectedReport === 'monthly') {
+
+            const startOfMonth = new Date();
+            startOfMonth.setHours(0, 0, 0, 0);
+            startOfMonth.setDate(1); // Set to the first day of the current month
+
+            const endOfMonth = new Date(startOfMonth);
+            endOfMonth.setMonth(endOfMonth.getMonth() + 1);
+            endOfMonth.setDate(0); // Set to the last day of the current month
+
+            orderDetails = await orderCollection.aggregate([
+                {
+                    $match: {
+                        createdAt: {
+                            $gte: startOfMonth,
+                            $lte: endOfMonth
+                        }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'detailslogs',
+                        localField: 'userId',
+                        foreignField: '_id',
+                        as: 'userDetails'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'productcollections',
+                        localField: 'productdetails.product',
+                        foreignField: '_id',
+                        as: 'productDetails'
+                    }
+                },
+                { $unwind: '$userDetails' }
+            ]);
+
+        } else if (selectedReport === 'default') {
+
+            orderDetails = await orderCollection.aggregate([{
+                $lookup: {
+                    from: 'detailslogs',
+                    localField: 'userId',
+                    foreignField: '_id',
+                    as: 'userDetails'
+                }
+            }, {
+                $lookup: {
+                    from: 'productcollections',
+                    localField: 'productdetails.product',
+                    foreignField: '_id',
+                    as: 'productDetails'
+                }
+            }, { $unwind: '$userDetails' }])
+
+        }
 
         res.render('admin/salesreport', { orderDetails })
     } catch (error) {
         console.log('Error in sales report get', error);
     }
+};
+
+// exports.admindashboardGet =async (req,res)=>{
+
+
+
+//     const startOfWeek = new Date();
+//     startOfWeek.setHours(0, 0, 0, 0);
+//     startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+
+//     const endOfWeek = new Date();
+//     endOfWeek.setHours(23, 59, 59, 999);
+//     endOfWeek.setDate(startOfWeek.getDate() + 6 - startOfWeek.getDay());
+
+//     orderDetails = await orderCollection.aggregate([
+//         {
+//             $match: {
+//                 createdAt: {
+//                     $gte: startOfWeek,
+//                     $lte: endOfWeek
+//                 }
+//             }
+//         },
+//         {
+//             $lookup: {
+//                 from: 'detailslogs',
+//                 localField: 'userId',
+//                 foreignField: '_id',
+//                 as: 'userDetails'
+//             }
+//         },
+//         {
+//             $lookup: {
+//                 from: 'productcollections',
+//                 localField: 'productdetails.product',
+//                 foreignField: '_id',
+//                 as: 'productDetails'
+//             }
+//         },
+//         { $unwind: '$userDetails' }
+//     ]);
+
+
+
+//     console.log(JSON.stringify(orderDetails[0].total),"bhghf");
+
+//     res.render('admin/admindashboard')
+// }
+
+exports.admindash = (req, res) => {
+    res.render('admin/admindashboard')
 }
+
+
+exports.admindashboardGetWeekly = async (req, res) => {
+    const dailyData = [];
+    const endDate = new Date(); // Current date
+    const startDate = moment(endDate).subtract(6, 'days').toDate();
+
+    for (let i = 0; i < 7; i++) {
+        const currentStartDate = moment(endDate)
+            .subtract(i, 'days')
+            .startOf('day')
+            .toDate();
+        const currentEndDate = moment(endDate)
+            .subtract(i, 'days')
+            .endOf('day')
+            .toDate();
+
+        // Retrieve data for the current day
+        const data = await orderCollection.find({
+            createdAt: {
+                $gte: currentStartDate,
+                $lte: currentEndDate,
+            },
+
+        })
+
+        console.log(data,);
+
+        let orderCount = data.length;
+        const totalForDay = data.reduce((acc, order) => acc + order.total, 0);
+
+        const currentDayData = {
+            date: moment(currentStartDate).format('DD/MM/YYYY'), // Store the start date of the current day
+            totalPrice: totalForDay,
+            count: orderCount
+
+        };
+
+        dailyData.push(currentDayData);
+
+    }
+    console.log(dailyData, "daily data");
+
+    res.json({ dailyData });
+
+
+
+    //monthly sales chart
+
+
+
+
+
+
+};
+
+
+
+exports.thirtyDayChart = async (req, res) => {
+    const dailyData = [];
+
+
+    const endDate = new Date(); // Current date
+    const startDate = moment(endDate).subtract(6, 'days').toDate();
+
+    for (let i = 0; i < 30; i++) {
+        const currentStartDate = moment(endDate)
+            .subtract(i, 'days')
+            .startOf('day')
+            .toDate();
+        const currentEndDate = moment(endDate)
+            .subtract(i, 'days')
+            .endOf('day')
+            .toDate();
+
+        // Retrieve data for the current day
+
+        // Retrieve data for the current day
+        const data = await orderCollection.find({
+            createdAt: {
+                $gte: currentStartDate,
+                $lte: currentEndDate,
+            },
+
+        })
+
+
+        let orderCount = data.length;
+
+        const totalForDay = data.reduce((acc, order) => acc + order.total, 0);
+
+
+
+        const currentDayData = {
+            date: moment(currentStartDate).format('DD/MM/YYYY'), // Store the start date of the current day
+            totalPrice: totalForDay,
+            count: orderCount
+
+        };
+
+        dailyData.push(currentDayData);
+
+    }
+    res.json({ dailyData });
+};
+
+
+
+
+//dailyChart
+
+
+// hourly total revenue and total order per hour
+
+exports.dailyChart = async (req, res) => {
+    const HourlyData = [];
+
+
+    const endDate = new Date(); // Current date
+    const startDate = moment(endDate).subtract(11, 'hours').toDate();
+
+    for (let i = 0; i < 12; i++) {
+        const currentStartDate = moment(endDate)
+            .subtract(i, 'hours')
+            .startOf('hours')
+            .toDate();
+        const currentEndDate = moment(endDate)
+            .subtract(i, 'hours')
+            .endOf('hours')
+            .toDate();
+
+
+
+        // Retrieve data for the current day
+        const data = await orderCollection.find({
+            createdAt: {
+                $gte: currentStartDate,
+                $lte: currentEndDate,
+            },
+
+        })
+
+        let orderCount = data.length;
+
+        const totalForDay = data.reduce((acc, order) => acc + order.total, 0);
+
+
+
+        const currentDayData = {
+            date: moment(currentStartDate).format('HH:mm'),
+            totalPrice: totalForDay,
+            count: orderCount
+
+        };
+
+        HourlyData.push(currentDayData);
+
+    }
+
+    console.log(HourlyData, "HOURLY DATA");
+    res.json({ HourlyData });
+
+};

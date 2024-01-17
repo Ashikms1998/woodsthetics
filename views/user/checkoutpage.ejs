@@ -186,57 +186,105 @@
                             <p class="text-xl font-medium py-6 border-b-2  text-black px-8">Payment Details</p>
                             <p class="text-gray-400 py-6 border-b-2 px-8">Complete your order by providing your payment
                                 details.</p>
+
                             <div class="py-6 border-b-2 px-8">
                                 <label for="paymentMode" class="mt-4 mb-2 block text-lg font-medium">Payment
                                     mode</label>
                                 <div class="relative">
-                                    <div>
-                                        <input type="radio" value="UPI" class=" rounded-md  py-4  text-sm   focus:z-10 "
-                                            name="paymentMode">
-                                        <span>UPI/OTHER</span>
-                                    </div>
-
-                                    <div class="flex justify-between">
+                                    <form id="paymentForm">
                                         <div>
-                                            <input type="radio" value="Wallet"
-                                                class=" rounded-md  py-4  text-sm   focus:z-10 " name="paymentMode">
-                                            <span>Wallet</span>
+                                            <input type="radio" value="UPI"
+                                                class=" rounded-md  py-4  text-sm   focus:z-10 " name="paymentMethod">
+                                            <span>UPI/OTHER</span>
                                         </div>
-                                        <p> Wallet Balance : <span id="walletBalance"></span>
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <input type="radio" value="COD" class=" rounded-md  py-4  text-sm   focus:z-10 "
-                                            name="paymentMode" checked>
-                                        <span>COD</span>
-                                    </div>
+
+                                        <div class="flex justify-between">
+                                            <div>
+                                                <input type="radio" value="Wallet"
+                                                    class=" rounded-md  py-4  text-sm   focus:z-10 "
+                                                    name="paymentMethod">
+                                                <span>Wallet</span>
+                                            </div>
+                                            <p> Wallet Balance : <span id="walletBalance"></span>
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <input type="radio" value="COD"
+                                                class=" rounded-md  py-4  text-sm   focus:z-10 " name="paymentMethod"
+                                                checked>
+                                            <span>Cash On Delivery</span>
+                                        </div>
                                 </div>
 
-                                <a href=/orderplaced
-                                    class="confirmOrder mt-5 flex justify-center submit-button px-3 py-3 rounded-md bg-black text-white focus:ring focus:outline-none w-full text-lg font-semibold transition-colors"
-                                    style="margin: top 10px; margin-bottom: 10px;">
-                                    Place Order
-                                </a>
+                                <button type="submit"
+                                    class="confirmOrder mt-5 flex justify-center submit-button px-3 py-3 rounded-md bg-black text-white focus:ring focus:outline-none w-full text-lg font-semibold transition-colors">Place
+                                    Order</button>
 
                             </div>
+                            </form>
 
-            </div> 
-            
-        </div>
-            <div>
-                <%-include('footer')%>
             </div>
+
+        </div>
+        <div>
+            <%-include('footer')%>
+        </div>
 
 </body>
 
-<!-- Cash On Delivery Script-->
+
+<!-- radio button script -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <script>
 
-    const orderConfirm = document.querySelector('.confirmOrder')
-    orderConfirm.addEventListener('click', function (event) {
-        confirmOrder()
-    })
+    document.getElementById('paymentForm').onsubmit = function (event) {
+        event.preventDefault();
+        console.log('hello');
+        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+
+        if (paymentMethod === 'UPI') {
+            console.log("hyvygyu");
+            fetch('/razorpay', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            }).then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    var options = {
+                        "key": "rzp_test_yeL2dUJ4nZYpET", // Enter the Key ID generated from the Dashboard
+                        "amount": 300, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+                        "currency": "INR",
+                        "name": "Woodsthetics",
+                        "description": "Test Transaction",
+                        "order_id": data.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+                        "handler": function (response) {
+                            confirmOrder()
+                        },
+
+                    };
+                    var rzp1 = new Razorpay(options);
+                    rzp1.on('payment.failed', function (response) {
+                        alert(response.error.code);
+                      
+                    });
+                    rzp1.open();
+                }).catch((rej) => console.log(rej))
+
+        } else if (paymentMethod === 'Wallet') {
+            console.log('wallet here');
+        } else if (paymentMethod === 'COD') {
+            confirmOrder()
+        }
+
+    };
+</script>
+
+
+
+<script>
     function confirmOrder() {
 
         const selectedRadio = document.querySelector('input[name="default-radio-12"]:checked');
@@ -277,7 +325,7 @@
                 return response.json();
             })
             .then(data => {
-                //   window.location.href = '/confirmation';
+                window.location.href = '/orderplaced';
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -285,7 +333,6 @@
     }
 </script>
 
-<!-- Cash On Delivery Script End-->
 
 <script>
     document.getElementById('addAddressBtn').addEventListener('click', function (event) {
