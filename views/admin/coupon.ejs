@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="/dist/output.css">
+</head>
+<%-include('admincomponents')%>
+
+  <body>
+    <div class="p-4 sm:ml-64">
+      <div class="p-4 border-2 border-gray-200 dark:border-gray-700 ">
+        <div class="px-10 pt-8 mb-3">
+          <a href="/addcoupon"
+            class="bg-black hover:bg-slate-900 text-white font-semibold py-2 px-4 rounded transition duration-300 ease-in-out">
+            ADD COUPON+
+            </a>
+        </div>
+        <div class="shadow-lg rounded-lg overflow-hidden mx-4 md:mx-10 pt-11">
+          <table class="w-full table-fixed">
+            <thead>
+              <tr class="bg-gray-100">
+                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Coupon Name</th>
+                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Coupon Code</th>
+                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Discount Type</th>
+                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Discount Value</th>
+                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Min Purchase</th>
+                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Start Date</th>
+                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">End Date</th>
+                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Action</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white">
+              <% coupondata.forEach((row,index)=>{ %>
+                <tr>
+
+                  <td class="py-4 px-6 border-b border-gray-200">
+                      <%= row.couponName%>
+                  </td>
+                  <td class="py-4 px-6 border-b border-gray-200">
+                      <%= row.couponCode%>
+                  </td>
+                  <td class="py-4 px-6 border-b border-gray-200">
+                      <%= row.discountType%>
+                  </td>
+                  <td class="py-4 px-6 border-b border-gray-200">
+                    <%= row.discountValue%>
+                  </td>
+                  <td class="py-4 px-6 border-b border-gray-200">
+                    <%= row.minimumPurchase%>
+                  </td>
+                  <td class="py-4 px-6 border-b border-gray-200">
+                    <%= row.startDate%>
+                  </td>
+                  <td class="py-4 px-6 border-b border-gray-200">
+                    <%= row.endDate%>
+                  </td>
+                  <td class="py-4 pl-5 border-b border-gray-200">
+                    <div class="">
+                      <a href="/editcoupon/<%=row._id%>" class="text-sm font-semibold gap-3">EDIT</a>
+                      <p class="deletecoupon cursor-pointer text-sm font-semibold" data-couponid="<%=row._id%>">DELETE</p>
+                    
+                    </div>
+                    <div>
+        </div>
+        </td>
+      </div>
+
+      </td>
+
+      </tr>
+    <% }) %>
+        </tbody>
+        </table>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  const deleteButton = document.querySelectorAll(".deletecoupon")
+  deleteButton.forEach((deleteBtn)=>{
+    deleteBtn.addEventListener("click",()=>{
+      const couponId = deleteBtn.getAttribute('data-couponid')
+      fetch(`/deletecoupon/${couponId}`,{
+        method: 'POST',
+        headers:{
+          'Content-Type': 'application/json'
+        },
+      })
+      .then(response => {
+              if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+              }
+              location.reload();
+              return response.json();
+            })
+            .then(data => {
+
+            })
+            .catch(error => {
+              console.log('Error:', error);
+      })
+    })
+  })
+</script>
+<script>
+  
+  
+</script>
+
+  
+  </body>
+
+
+</html>

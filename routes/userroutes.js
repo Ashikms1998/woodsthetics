@@ -11,7 +11,7 @@ const {homeGet, productsGet, singleproductGet,wishlistGet,userprofilePost,userpr
 const{loginGet,loginPost,otpGet,otpPost,resendGet,signupGet,signupPost,verificationGet,forgotpasswordGet,forgotpasswordPost,updatepassword,logoutGet}=require('../controller/loginController')
 
 //Cart Controller
-const{cartGet,emptycartGet,cartPost,updatecartPost,deletecartproductPost} = require('../controller/cartController')
+const{cartGet,emptycartGet,cartPost,updatecartPost,deletecartproductPost,applypromoPost} = require('../controller/cartController')
 
 //Order Controller
 const{orderPageGet,confirmationPost,checkoutpageGet,cancelOrderPost,orderplacedGet,returnOrderPost,razorpayPost} = require('../controller/orderController')
@@ -39,7 +39,7 @@ router.post('/cart', cartPost);
 router.get('/emptycart', session,isblock,emptycartGet);
 router.post('/updateCart' ,updatecartPost);
 router.post('/deletecartproduct',deletecartproductPost);
-
+router.post('/applyPromo',applypromoPost)
 //Order Controller
 
 router.get('/orderPage/:id',orderPageGet)

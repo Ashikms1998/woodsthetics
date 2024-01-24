@@ -38,7 +38,9 @@ const upload = multer({ storage: storage });
 
 const { loginGet, loginPost, logoutadmin, userGet, categoryGet, addcategoryPost, productmanagementGet, addproductGet, productadd, blockUser, editproductGet, editproductPost, homeGet, editcategoryGet, editcategoryPost, deleteproductGet, orderGet, updateStatusPost, blockProductPost, blockedCategoryPost, salesreportGet,admindash ,admindashboardGetWeekly,thirtyDayChart,dailyChart} = require('../controller/adminController');
 
+// Coupon Controller
 
+const {couponGet,addcouponGet,addcouponPost,deletecouponPost,editcouponGet,editcouponPost} = require('../controller/couponController')
 
 
 router.get('/adminhome', adminsession, homeGet);
@@ -56,10 +58,14 @@ router.get('/admindashboard',adminsession,admindash)
 router.get('/admindashboard/Weeklyreport',adminsession,admindashboardGetWeekly)
 router.get('/admindashboard/Monthlyreport',adminsession,thirtyDayChart)
 router.get('/admindashboard/dailyreport',adminsession,dailyChart)
-
-
+router.get('/couponmanagement',adminsession,couponGet)
+router.get('/addcoupon',adminsession,addcouponGet);
+router.post('/deletecoupon/:_id', adminsession, deletecouponPost)
+router.get('/editcoupon/:_id', adminsession, editcouponGet);
+router.post('/editcoupon/:_id', adminsession, editcouponPost);
 
 // post
+
 router.post('/adminlogin', loginPost);
 router.get('/adminlogout', logoutadmin);
 router.post('/addCategory', adminsession, addcategoryPost);
@@ -71,4 +77,5 @@ router.post('/deleteproduct/:_id', adminsession, deleteproductGet)
 router.post('/updateStatus', adminsession, updateStatusPost);
 router.post('/unlistProduct', adminsession, blockProductPost)
 router.post('/unlistCategory', adminsession, blockedCategoryPost)
+router.post('/addcoupon',adminsession,addcouponPost)
 module.exports = router;

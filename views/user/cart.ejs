@@ -105,18 +105,29 @@
                             <div class="py-6">
                                 <label for="promo" class="font-semibold inline-block mb-3 text-sm uppercase">Promo
                                     Code</label>
-                                <input type="text" id="promo" placeholder="Enter your code"
+                                <input type="text" onchange="removeCoupon()" id="promo" placeholder="Enter your code"
                                     class="p-2 text-sm w-full border border-gray-300 rounded-lg">
+                                    <span id="promoError" class=""></span>
                             </div>
-                            <button
-                                class="bg-red-500 hover:bg-red-600 px-5 py-2 text-sm text-white font-medium rounded-xl">Apply</button>
+                            
+                            <button id="applyBtn" type="button" onclick="applyPromo()" class="bg-red-500 hover:bg-red-600 px-5 py-2 text-sm text-white font-medium rounded-xl">Apply</button>
+                        
                             <hr class="my-2">
+
+                            <div class="flex font-semibold justify-between py-3">
+                                <span class="w-1/2">Discount</span>
+                                <input type="hidden" value="null" name="offer" id="coupon">
+                                <input type="text" value="-₹0" id="offer" class="text-right w-20 bg-transparent focus:border-0 cursor-default" readonly onmousedown="return false;" onselectstart="return false;">
+                                <span></span>
+                            </div>
+
                             <div class="flex justify-between mb-2">
                                 <span class="font-semibold">Total</span>
-                                <span class="font-semibold">₹<%= sum %></span>
+                                <span class="font-semibold" id="total">₹<%= sum %></span>
+                                
                             </div>
                             <a href="/checkoutpage"
-                                class="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 w-full">Checkout</a>
+                                class="bg-blue-500 text-white py-2 px-4 rounded-lg mt-6 w-full">Checkout</a>
                         </div>
                     </div>
                 </div>
@@ -199,6 +210,79 @@
                 }
 
             </script>
+
+            <!-- //apply pramo code -->
+            <script>
+                function applyPromo(){
+                    let code = document.getElementById("promo").value;
+                    let err = document.getElementById('promoError')
+                    let total = document.getElementById('total').value.substring(1)
+                    if(!code){
+                        err.innerHTML = "Please add the code applying"
+                    }else{
+                        fetch('/applyPromo',{
+                            method:'POST',
+                            headers:{
+                                'Content-Type':'application/json',
+                            },
+                            body:JSON.stringify({
+                            code:code,
+                            total:total
+                        }),
+                    })
+                    .then(response => response.json())
+                    .then(data =>{
+                        if(data.error){
+                            err.innerHTML = `${data.error}`
+                        }else{
+                            PromoMatched(data.type,data.value,data.id)
+                            err.innerHTML = "Coupon Applied"
+                        }
+                    })
+                    .catch((error)=>{
+                        console.log(error);
+                    });
+                }
+            }
+
+            function PromoMatched(type,value,id){
+                let applyBtn = document.getElementById('applyBtn')
+                let offer = document.getElementById('offer')
+                let coupon = document.getElementById('coupon')
+                coupon.value = id
+                applyBtn.disabled = true
+                let totalElement = document.getElementById('total')
+                let total = document.getElementById('total').value.substring(1)
+                total = parseInt(total)
+                if(type=='Percentage'){
+                    total = total-(total*value/100)
+                    offer.value = `-${value}%`
+                }else{
+                    total -=value
+                    offer.value = `-₹${value}`
+                }
+                totalElement.value = `₹${total}`
+                
+
+            }
+            </script>
+
+            <!-- remove coupon -->
+            <script>
+                let orginalValue = '<%=sum%>'
+                let totalElement = document.getElementById('total')
+                let applyBtn = document.getElementById('applyBtn')
+                let offer = document.getElementById('offer')
+                let coupon=document.getElementById('coupon')
+                let err = document.getElementById('promoError')
+                function removeCoupon(){
+                    coupon.value = 'null'
+                    offer.value = `-0`
+                    totalElement.value = `₹${orginalValue}`
+                    applyBtn.disabled = false
+                }
+            </script>
+
 </body>
 
 </html>

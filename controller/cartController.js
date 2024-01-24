@@ -9,6 +9,7 @@ const { log, error } = require('console');
 const { orderCollection } = require('../model/orderDB');
 const { response } = require('express'); 
 const { categoryCollection } = require('../model/categoryDB');
+const { couponCollection } = require('../model/couponDB');
 
 
 
@@ -151,3 +152,22 @@ exports.emptycartGet = (req, res) => {
 
     res.render('user/emptycart', { userData });
 };
+
+exports.applypromoPost = async (req,res)=>{
+    try {
+    let code = req.body.code
+    let total = req.body.total
+    const coupon = await couponCollection.findOne({couponCode:code})
+    if(!coupon){
+        return res.send({error:'Invalid Code'})
+    }
+    if(total>coupon.minimumPurchase){
+        return res.send({type:coupon.discountType,value:coupon.discountValue,id: coupon._id})
+    }else{
+        return res.send({error:`Minimum purchase value is ${coupon.minimumPurchase}`})
+    }
+
+    }catch(error){
+        console.log('Error in Apply Promo',error);
+    }
+}

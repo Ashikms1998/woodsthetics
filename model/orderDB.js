@@ -1,9 +1,3 @@
-
-
-
-
-
-
 //ORDER SCHEMA orderDB
 
 
@@ -11,12 +5,6 @@ const mongoose = require('mongoose');
 const { productCollection } = require('./productDB');
 const {Schema} =mongoose;
 
-// const userOrderSchema = new mongoose.Schema({
-//     userId: {
-//         type:mongoose.Schema.Types.ObjectId,
-//         ref: "productCollection"
-//     }
-// });
 const addressSchema = new mongoose.Schema({
     address:{
         type:String,

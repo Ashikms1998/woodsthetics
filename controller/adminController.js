@@ -382,7 +382,7 @@ exports.salesreportGet = async (req, res) => {
     try {
 
         const selectedReport = req.query.type || 'default';
-        console.log(selectedReport, 'dhaande');
+        
         let orderDetails;
 
         if (selectedReport === 'daily') {
@@ -526,52 +526,6 @@ exports.salesreportGet = async (req, res) => {
     }
 };
 
-// exports.admindashboardGet =async (req,res)=>{
-
-
-
-//     const startOfWeek = new Date();
-//     startOfWeek.setHours(0, 0, 0, 0);
-//     startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
-
-//     const endOfWeek = new Date();
-//     endOfWeek.setHours(23, 59, 59, 999);
-//     endOfWeek.setDate(startOfWeek.getDate() + 6 - startOfWeek.getDay());
-
-//     orderDetails = await orderCollection.aggregate([
-//         {
-//             $match: {
-//                 createdAt: {
-//                     $gte: startOfWeek,
-//                     $lte: endOfWeek
-//                 }
-//             }
-//         },
-//         {
-//             $lookup: {
-//                 from: 'detailslogs',
-//                 localField: 'userId',
-//                 foreignField: '_id',
-//                 as: 'userDetails'
-//             }
-//         },
-//         {
-//             $lookup: {
-//                 from: 'productcollections',
-//                 localField: 'productdetails.product',
-//                 foreignField: '_id',
-//                 as: 'productDetails'
-//             }
-//         },
-//         { $unwind: '$userDetails' }
-//     ]);
-
-
-
-//     console.log(JSON.stringify(orderDetails[0].total),"bhghf");
-
-//     res.render('admin/admindashboard')
-// }
 
 exports.admindash = (req, res) => {
     res.render('admin/admindashboard')
@@ -617,7 +571,6 @@ exports.admindashboardGetWeekly = async (req, res) => {
         dailyData.push(currentDayData);
 
     }
-    console.log(dailyData, "daily data");
 
     res.json({ dailyData });
 
@@ -734,8 +687,6 @@ exports.dailyChart = async (req, res) => {
         HourlyData.push(currentDayData);
 
     }
-
-    console.log(HourlyData, "HOURLY DATA");
     res.json({ HourlyData });
 
 };

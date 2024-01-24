@@ -25,7 +25,7 @@ exports.confirmationPost = async (req, res) => {
         const Ordernumber = orderGenerator()
 
         const cartDetails = await cartCollection.findOne({ userId: userId });
-        // console.log(cartDetails);
+      
         const productdetails = cartDetails.products;
         productdetails.forEach(async (ele) => {
             await productCollection.findOneAndUpdate(
@@ -44,7 +44,7 @@ exports.confirmationPost = async (req, res) => {
 
         const totalPrice = prices.reduce((acc, price) => acc + price, 0);
 
-        console.log(productdetails);
+        
         const allOrder = new orderCollection({
             userId: userId,
             productdetails: productdetails,
@@ -115,7 +115,7 @@ exports.cancelOrderPost = async (req, res) => {
             { $inc: { quantity: productQuantity } }, //update the quantity
             { new: true }
         );
-        console.log(updatingCancelledProduct);
+   
 
         res.status(200).send('Order is canceled');
     } catch (error) {
@@ -138,7 +138,7 @@ exports.orderPageGet = async (req, res) => {
             return res.redirect('/notfound');
         }
         let products = [];
-        console.log(order.productdetails, "asfjkhbsjdf");
+        
         for (const prod of order.productdetails) {
             try {
                 const item = await productCollection.findById(prod.product)
@@ -156,7 +156,7 @@ exports.orderPageGet = async (req, res) => {
                 console.log("Error fetching product:", error);
             }
         }
-        console.log(products);
+        
         res.render('user/orderPage', { order, products, user, userData })
 
     } catch (error) {
@@ -189,10 +189,11 @@ exports.returnOrderPost = async (req, res) => {
         const updatingReturnedProduct = await productCollection.findOneAndUpdate(
 
             { _id: productId },
-            { $inc: { quantity: productQuantity } }, //update the quantity
-            { new: true }
+            { $inc: { quantity: productQuantity } },
+            { new: true } //update the quantity
+        
         );
-        console.log(updatingReturnedProduct, 'lalslalsdasdad');
+       
         res.status(200).send('Order is returned');
     } catch (error) {
         console.log(error);
@@ -201,12 +202,12 @@ exports.returnOrderPost = async (req, res) => {
 };
 
 exports.razorpayPost = async (req, res) => {
-    console.log("hehehe");
+   
     try {
         const Razorpay = require('razorpay');
         var instance = new Razorpay({ key_id: 'rzp_test_yeL2dUJ4nZYpET', key_secret: 'CnCY5mqo5tDp947MvrThiIAH' })
         const cartDetails = await cartCollection.findOne({ userId: req.session.user._id });
-        // console.log(cartDetails);
+       
         const productdetails = cartDetails.products;
         productdetails.forEach(async (ele) => {
             await productCollection.findOneAndUpdate(
