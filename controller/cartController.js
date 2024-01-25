@@ -28,7 +28,6 @@ exports.cartGet = async (req, res) => {
 
         const userData = req.session.user
 
-        // console.log('koooooooo',createCart.products.length);
         if (!createCart) {
 
             return res.render('user/emptycart', { userData });
@@ -157,12 +156,30 @@ exports.applypromoPost = async (req,res)=>{
     try {
     let code = req.body.code
     let total = req.body.total
+    let shippingfee = 1000;
     const coupon = await couponCollection.findOne({couponCode:code})
+    const discountprice = coupon.discountValue
+    let userId = req.session.user._id;
+
+    const cartDetails = await cartCollection.findOne({userId:userId});
+    const productdetails = cartDetails.products;
+    const prices = await Promise.all(productdetails.map(async (ele) => {
+        const product = await productCollection.findById(ele.product);
+        const qty = ele.quantity;
+        const price = product.price * qty;
+        return price;
+    }));
+    const totalPrice = prices.reduce((acc, price) => acc + price, 0);
+    
+
     if(!coupon){
         return res.send({error:'Invalid Code'})
     }
-    if(total>coupon.minimumPurchase){
-        return res.send({type:coupon.discountType,value:coupon.discountValue,id: coupon._id})
+    if( total >= coupon.minimumPurchase ){
+        sum_subtotal = totalPrice;
+        const totalAmount = sum_subtotal - discountprice;
+        await cartCollection.updateOne({userId:userId},{$set:{discount:discountprice , couponApplied: true, totalprice:totalAmount}});
+        return res.json({type:coupon.discountType,value:coupon.discountValue,id: coupon._id,amount:totalAmount})
     }else{
         return res.send({error:`Minimum purchase value is ${coupon.minimumPurchase}`})
     }

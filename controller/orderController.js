@@ -19,13 +19,15 @@ var instance = new Razorpay({
 
 
 exports.confirmationPost = async (req, res) => {
+    console.log("cartDetails");
+
     try {
         const address = req.body.orderDetails.selectedAddressData;
         const userId = req.session.user._id
         const Ordernumber = orderGenerator()
-
+        let totalPrice;
+        
         const cartDetails = await cartCollection.findOne({ userId: userId });
-      
         const productdetails = cartDetails.products;
         productdetails.forEach(async (ele) => {
             await productCollection.findOneAndUpdate(
@@ -34,6 +36,9 @@ exports.confirmationPost = async (req, res) => {
                 { new: true }
             )
         });
+        if (cartDetails.couponApplied) {
+            totalPrice = cartDetails.totalprice
+        }else{
 
         const prices = await Promise.all(productdetails.map(async (ele) => {
             const product = await productCollection.findById(ele.product);
@@ -42,8 +47,9 @@ exports.confirmationPost = async (req, res) => {
             return price;
         }));
 
-        const totalPrice = prices.reduce((acc, price) => acc + price, 0);
-
+        totalPrice = prices.reduce((acc, price) => acc + price, 0);
+        }
+        
         
         const allOrder = new orderCollection({
             userId: userId,

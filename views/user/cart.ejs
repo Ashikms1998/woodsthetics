@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="/dist/output.css">
-    
+
 </head>
 
 <body>
@@ -47,17 +47,22 @@
                                             <td class="py-4">
                                                 <div class="text-center">
                                                     ₹ <%=products[index].price%>
-                                            </div>    
+                                                </div>
                                             </td>
-                                            
+
                                             <td class="py-4 text-center">
                                                 <div class="justify-center items-center">
-                                                    <button class="border rounded-md py-2 px-4 mr-2 minus" id="minus"  data-item-id="<%=products[index]._id%>">-</button>
+                                                    <button class="border rounded-md py-2 px-4 mr-2 minus" id="minus"
+                                                        data-item-id="<%=products[index]._id%>">-</button>
 
-                                                    
-                                                    <span class="text-center w-8 amount" id="amount" data-item-id="<%=products[index]._id%>"><%=row.quantity%></span>
 
-                                                    <button class="border rounded-md py-2 px-4 ml-2 plus" id="plus" data-item-id="<%=products[index] ._id%>">+</button>
+                                                    <span class="text-center w-8 amount" id="amount"
+                                                        data-item-id="<%=products[index]._id%>">
+                                                        <%=row.quantity%>
+                                                    </span>
+
+                                                    <button class="border rounded-md py-2 px-4 ml-2 plus" id="plus"
+                                                        data-item-id="<%=products[index] ._id%>">+</button>
                                                 </div>
                                             </td>
 
@@ -90,11 +95,15 @@
                             <div class="flex justify-between mb-2">
                                 <span class="font-medium">Subtotal</span>
                                 <span>
-                                    ₹<% let sum=createCart.products.reduce((accumulator, item)=> {
-                                        let product = products.find(product =>{
-                                        return product._id.equals(item.product)});
-                                        return accumulator + product.price * item.quantity; }, 0); %>
-                                        <%= sum %>
+                                    <% let sum; %>
+                                        ₹<% if(createCart.couponApplied){ sum=createCart.totalprice; }else{
+                                            sum=createCart.products.reduce((accumulator, item)=> {
+                                            let product = products.find(product =>{
+                                            return product._id.equals(item.product)});
+                                            return accumulator + product.price * item.quantity; }, 0);
+                                            }
+                                            %>
+                                            <%= sum %>
 
                                 </span>
                             </div>
@@ -107,24 +116,28 @@
                                     Code</label>
                                 <input type="text" onchange="removeCoupon()" id="promo" placeholder="Enter your code"
                                     class="p-2 text-sm w-full border border-gray-300 rounded-lg">
-                                    <span id="promoError" class=""></span>
+                                <span id="promoError" class="font-semibold text-black text-sm"></span>
                             </div>
-                            
-                            <button id="applyBtn" type="button" onclick="applyPromo()" class="bg-red-500 hover:bg-red-600 px-5 py-2 text-sm text-white font-medium rounded-xl">Apply</button>
-                        
+
+                            <button id="applyBtn" type="button" onclick="applyPromo()"
+                                class="bg-red-500 hover:bg-red-600 px-5 py-2 text-sm text-white font-medium rounded-xl">Apply</button>
+
                             <hr class="my-2">
 
                             <div class="flex font-semibold justify-between py-3">
                                 <span class="w-1/2">Discount</span>
                                 <input type="hidden" value="null" name="offer" id="coupon">
-                                <input type="text" value="-₹0" id="offer" class="text-right w-20 bg-transparent focus:border-0 cursor-default" readonly onmousedown="return false;" onselectstart="return false;">
-                                <span></span>
+                                <input type="text"value=<% if(createCart.discount){ %>
+                                        -₹<%=createCart.discount%>
+                                    <% } %> id="offer" class="text-right w-20 bg-transparent focus:border-0 cursor-default" readonlyonmousedown="return false;" onselectstart="return false;">
+                                
+
                             </div>
 
                             <div class="flex justify-between mb-2">
                                 <span class="font-semibold">Total</span>
-                                <span class="font-semibold" id="total">₹<%= sum %></span>
-                                
+                                <span class="font-semibold" id="total">₹<%=sum%></span>
+
                             </div>
                             <a href="/checkoutpage"
                                 class="bg-blue-500 text-white py-2 px-4 rounded-lg mt-6 w-full">Checkout</a>
@@ -134,10 +147,10 @@
             </div>
         </div>
 
-        <%-include('footer')%> 
+        <%-include('footer')%>
 
             <script src="/js/delete.js">
-                
+
             </script>
 
             <script>
@@ -145,126 +158,127 @@
                 let minuses = document.getElementsByClassName('minus');
                 let amounts = document.getElementsByClassName('amount');
 
-                for(let i=0; i< pluses.length; i++){
+                for (let i = 0; i < pluses.length; i++) {
 
-                    pluses[i].addEventListener("click",function (){
+                    pluses[i].addEventListener("click", function () {
                         let itemId = this.dataset.itemId;
-                        amounts[i].innerHTML = parseInt(amounts[i].innerHTML) +1;
+                        amounts[i].innerHTML = parseInt(amounts[i].innerHTML) + 1;
                         let newAmount = parseInt(amounts[i].innerHTML);
-                        fetch('/updateCart',{
-                            method:'POST',
-                            headers:{
+                        fetch('/updateCart', {
+                            method: 'POST',
+                            headers: {
                                 'Content-Type': 'application/json',
                             },
-                            body: JSON.stringify({itemId:itemId, amount:newAmount}),
-                            
+                            body: JSON.stringify({ itemId: itemId, amount: newAmount }),
+
                         })
-                        .then(response => response.json())
-                        .then(data=>{
-                            console.log('Success:', data);
-                            window.location.reload();
-                        })
-                        .catch((error)=>{
-                            window.location.reload();
-                            alert('product out of stock')
-                            console.error('Error:', error);
-                        });
-                        
-                    });
-                        
-                    minuses[i].addEventListener("click", function(){
-                        
-                        if(parseInt(amounts[i].innerHTML) > 1){
-                            
-                            amounts[i].innerHTML = parseInt(amounts[i].innerHTML) -1;
-                        }
-                        minuses[i].style.display = (parseInt(amounts[i].innerHTML)===1)? 'none': 'inline-block';
-
-                            let itemId = this.dataset.itemId;
-                            console.log(itemId);
-                            let newAmount = parseInt(amounts[i].innerHTML);
-
-                            if(newAmount>0){
-                            
-                                fetch('/updateCart',{
-                                    method:'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-
-                                    },
-                                    body:JSON.stringify({itemId: itemId,amount:newAmount}),
-                                })
-                                .then(response => response.json())
+                            .then(response => response.json())
                             .then(data => {
-                            console.log('Success:', data);
+                                console.log('Success:', data);
+                                window.location.reload();
                             })
                             .catch((error) => {
-                            console.error('Error:', error);
+                                window.location.reload();
+                                alert('product out of stock')
+                                console.error('Error:', error);
                             });
+
+                    });
+
+                    minuses[i].addEventListener("click", function () {
+
+                        if (parseInt(amounts[i].innerHTML) > 1) {
+
+                            amounts[i].innerHTML = parseInt(amounts[i].innerHTML) - 1;
+                        }
+                        minuses[i].style.display = (parseInt(amounts[i].innerHTML) === 1) ? 'none' : 'inline-block';
+
+                        let itemId = this.dataset.itemId;
+                        console.log(itemId);
+                        let newAmount = parseInt(amounts[i].innerHTML);
+
+                        if (newAmount > 0) {
+
+                            fetch('/updateCart', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+
+                                },
+                                body: JSON.stringify({ itemId: itemId, amount: newAmount }),
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    console.log('Success:', data);
+                                })
+                                .catch((error) => {
+                                    console.error('Error:', error);
+                                });
                             window.location.reload();
-                            
+
                         }
                     });
 
-                    minuses[i].style.display = (parseInt(amounts[i].innerHTML)===1)? 'none': 'inline-block';
+                    minuses[i].style.display = (parseInt(amounts[i].innerHTML) === 1) ? 'none' : 'inline-block';
                 }
 
             </script>
 
             <!-- //apply pramo code -->
             <script>
-                function applyPromo(){
+                function applyPromo() {
                     let code = document.getElementById("promo").value;
                     let err = document.getElementById('promoError')
                     let total = document.getElementById('total').value.substring(1)
-                    if(!code){
+                    if (!code) {
                         err.innerHTML = "Please add the code applying"
-                    }else{
-                        fetch('/applyPromo',{
-                            method:'POST',
-                            headers:{
-                                'Content-Type':'application/json',
+                    } else {
+                        fetch('/applyPromo', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
                             },
-                            body:JSON.stringify({
-                            code:code,
-                            total:total
-                        }),
-                    })
-                    .then(response => response.json())
-                    .then(data =>{
-                        if(data.error){
-                            err.innerHTML = `${data.error}`
-                        }else{
-                            PromoMatched(data.type,data.value,data.id)
-                            err.innerHTML = "Coupon Applied"
-                        }
-                    })
-                    .catch((error)=>{
-                        console.log(error);
-                    });
+                            body: JSON.stringify({
+                                code: code,
+                                total: total
+                            }),
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.error) {
+                                    err.innerHTML = `${data.error}`
+                                } else {
+                                    PromoMatched(data.type, data.value, data.id, data.amountmount)
+                                    document.getElementById('total').innerText = '₹' + (data.amount)
+                                    err.innerHTML = "Coupon Applied"
+                                }
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            });
+                    }
                 }
-            }
 
-            function PromoMatched(type,value,id){
-                let applyBtn = document.getElementById('applyBtn')
-                let offer = document.getElementById('offer')
-                let coupon = document.getElementById('coupon')
-                coupon.value = id
-                applyBtn.disabled = true
-                let totalElement = document.getElementById('total')
-                let total = document.getElementById('total').value.substring(1)
-                total = parseInt(total)
-                if(type=='Percentage'){
-                    total = total-(total*value/100)
-                    offer.value = `-${value}%`
-                }else{
-                    total -=value
-                    offer.value = `-₹${value}`
+                function PromoMatched(type, value, id) {
+                    let applyBtn = document.getElementById('applyBtn')
+                    let offer = document.getElementById('offer')
+                    let coupon = document.getElementById('coupon')
+                    coupon.value = id
+                    applyBtn.disabled = true
+                    let totalElement = document.getElementById('total')
+                    let total = document.getElementById('total').value.substring(1)
+                    total = parseInt(total)
+                    if (type == 'Percentage') {
+                        total = total - (total * value / 100)
+                        offer.value = `-${value}%`
+                    } else {
+                        total -= value
+                        offer.value = `-₹${value}`
+                    }
+                    totalElement.value = `₹${total}`
+
+
                 }
-                totalElement.value = `₹${total}`
-                
-
-            }
             </script>
 
             <!-- remove coupon -->
@@ -273,9 +287,9 @@
                 let totalElement = document.getElementById('total')
                 let applyBtn = document.getElementById('applyBtn')
                 let offer = document.getElementById('offer')
-                let coupon=document.getElementById('coupon')
+                let coupon = document.getElementById('coupon')
                 let err = document.getElementById('promoError')
-                function removeCoupon(){
+                function removeCoupon() {
                     coupon.value = 'null'
                     offer.value = `-0`
                     totalElement.value = `₹${orginalValue}`
