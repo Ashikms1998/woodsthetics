@@ -152,17 +152,56 @@
                                         <%=checkoutQuantity[index]%>
                                     </p>
                                     <span class="text-black">
-                                        <%=checkoutQuantity[index]%> x ₹<%=checkoutItems[index].price%>
+
+                                        <%let discountedPrice=row.price
+                                                        if(row.productOffer[0] &&
+                                                        row.categoryOffer[0] &&
+                                                        row.productOffer[0].enable &&
+                                                        row.categoryOffer[0].enable) { %>
+                                                        <% const
+                                                            productDiscount=row.price*row.productOffer[0].discount/100
+                                                            const
+                                                            categoryDiscount=row.price*row.categoryOffer[0].discount/100
+                                                            discountedPrice=Math.floor(row.price-Math.max(productDiscount,categoryDiscount))
+                                                            %>
+                                                            <p class="text-lg font-semibold  text-black cursor-auto my-3"
+                                                                data-price="<%= discountedPrice %>">Rs.<%=
+                                                                    discountedPrice %>
+                                                            </p>
+                                                            <% } else if(row.productOffer[0] &&
+                                                            row.productOffer[0].enable){ %>
+                                                                <% discountedPrice=Math.floor(row.price-(row.price*row.productOffer[0].discount/100))
+                                                                    %>
+                                                                    <p class="text-lg font-semibold  text-black cursor-auto my-3"
+                                                                        data-price="<%= discountedPrice %>">Rs.<%=
+                                                                            discountedPrice%>
+                                                                    </p>
+                                                                    <% } else if(row.categoryOffer[0] &&
+                                                                    row.categoryOffer[0].enable){ %>
+                                                                        <%
+                                                                            discountedPrice=Math.floor(row.price-(row.price*row.categoryOffer[0].discount/100))%>
+                                                                            <p class="text-lg font-semibold  text-black cursor-auto my-3"
+                                                                                data-price="<%= discountedPrice %>">Rs.
+                                                                                <%= discountedPrice %>
+                                                                            </p>
+                                                                            <%}else{%>
+
+                                                                                Rs.<%=row.price%>
+                                                                                    <%}%>
+
+
+
+                                        <%=checkoutQuantity[index]%> x ₹<%=discountedPrice%>
                                     </span>
                                     <span class="text-black font-semibold inline-block">₹<%=checkoutQuantity[index] *
-                                            checkoutItems[index].price%></span>
+                                        discountedPrice%></span>
                                 </div>
                             </div>
                         </li>
 
                     </ul>
 
-                    <% a=a + (checkoutQuantity[index] * checkoutItems[index].price)%>
+                    <% a=a + (checkoutQuantity[index] * discountedPrice)%>
 
                         <%})%>
 
@@ -237,7 +276,8 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <script>
-
+    const orderTotal = document.getElementById('orderTotal').innerText.substring(1);
+    
     document.getElementById('paymentForm').onsubmit = function (event) {
         event.preventDefault();
         console.log('hello');
@@ -249,7 +289,9 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                }
+                },
+                body: JSON.stringify({orderTotal}),
+               
             }).then(response => response.json())
                 .then(data => {
                     console.log(data);

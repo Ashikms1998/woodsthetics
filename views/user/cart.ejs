@@ -46,7 +46,42 @@
                                             </td>
                                             <td class="py-4">
                                                 <div class="text-center">
-                                                    ₹ <%=products[index].price%>
+
+                                                    <%let discountedPrice=products[index].price
+                                                        if(products[index].productOffer[0] &&
+                                                        products[index].categoryOffer[0] &&
+                                                        products[index].productOffer[0].enable &&
+                                                        products[index].categoryOffer[0].enable) { %>
+                                                        <% const
+                                                            productDiscount=products[index].price*products[index].productOffer[0].discount/100
+                                                            const
+                                                            categoryDiscount=products[index].price*products[index].categoryOffer[0].discount/100
+                                                            discountedPrice=Math.floor(products[index].price-Math.max(productDiscount,categoryDiscount))
+                                                            %>
+                                                            <p class="text-lg font-semibold  text-black cursor-auto my-3"
+                                                                data-price="<%= discountedPrice %>">Rs.<%=
+                                                                    discountedPrice %>
+                                                            </p>
+                                                            <% } else if(products[index].productOffer[0] &&
+                                                                products[index].productOffer[0].enable){ %>
+                                                                <% discountedPrice=Math.floor(products[index].price-(products[index].price*products[index].productOffer[0].discount/100))
+                                                                    %>
+                                                                    <p class="text-lg font-semibold  text-black cursor-auto my-3"
+                                                                        data-price="<%= discountedPrice %>">Rs.<%=
+                                                                            discountedPrice%>
+                                                                    </p>
+                                                                    <% } else if(products[index].categoryOffer[0] &&
+                                                                        products[index].categoryOffer[0].enable){ %>
+                                                                        <%
+                                                                            discountedPrice=Math.floor(products[index].price-(products[index].price*products[index].categoryOffer[0].discount/100))%>
+                                                                            <p class="text-lg font-semibold  text-black cursor-auto my-3"
+                                                                                data-price="<%= discountedPrice %>">Rs.
+                                                                                <%= discountedPrice %>
+                                                                            </p>
+                                                                            <%}else{%>
+
+                                                                                Rs.<%=products[index].price%>
+                                                                                    <%}%>
                                                 </div>
                                             </td>
 
@@ -67,7 +102,7 @@
                                             </td>
 
                                             <td class="py-4 text-center">
-                                                ₹ <%=products[index].price*row.quantity%>
+                                                ₹ <%=discountedPrice*row.quantity%>
                                             </td>
 
                                             <td class="py-4 text-center">
@@ -96,7 +131,9 @@
                                 <span class="font-medium">Subtotal</span>
                                 <span>
                                     <% let sum; %>
-                                        ₹<% if(createCart.couponApplied){ sum=createCart.totalprice; }else{
+                                        ₹<% if(createCart.couponApplied){ 
+                                            sum=createCart.totalprice 
+                                        }else{
                                             sum=createCart.products.reduce((accumulator, item)=> {
                                             let product = products.find(product =>{
                                             return product._id.equals(item.product)});
@@ -127,11 +164,10 @@
                             <div class="flex font-semibold justify-between py-3">
                                 <span class="w-1/2">Discount</span>
                                 <input type="hidden" value="null" name="offer" id="coupon">
-                                <input type="text"value=<% if(createCart.discount){ %>
-                                        -₹<%=createCart.discount%>
-                                    <% } %> id="offer" class="text-right w-20 bg-transparent focus:border-0 cursor-default" readonlyonmousedown="return false;" onselectstart="return false;">
-                                
-
+                                <input type="text"
+                                    value='<% if(createCart.discount){ %> `-₹<%=createCart.discount%>` <% } %>'
+                                    id="offer" class="text-right w-20 bg-transparent focus:border-0 cursor-default"
+                                    readonly onmousedown="return false;" onselectstart="return false;">
                             </div>
 
                             <div class="flex justify-between mb-2">
@@ -248,7 +284,7 @@
                                 if (data.error) {
                                     err.innerHTML = `${data.error}`
                                 } else {
-                                    PromoMatched(data.type, data.value, data.id, data.amountmount)
+                                    PromoMatched(data.type, data.value, data.id, data.amount)
                                     document.getElementById('total').innerText = '₹' + (data.amount)
                                     err.innerHTML = "Coupon Applied"
                                 }

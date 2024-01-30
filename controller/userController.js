@@ -9,8 +9,8 @@ const { log, error } = require('console');
 const { orderCollection } = require('../model/orderDB');
 const { response } = require('express');
 const { categoryCollection } = require('../model/categoryDB');
-
-
+const { offerCollection } = require('../model/offerDB')
+const { ObjectId } = require('mongodb')
 exports.homeGet = async (req, res) => {
     const userData = req.session.user
     res.render('user/home', { userData });
@@ -29,19 +29,74 @@ exports.productsGet = async (req, res) => {
         const skip = (currentPage - 1) * productsPerPage;
 
         //pagination end here
+
         const userData = req.session.user
         const categoryFilter = await categoryCollection.find({ blockStatus: false })
 
-        const totalProd = await productCollection.find({ blocked: false })
-        // console.log(totalProd,'ithan ivida scene ondakkana');
+        // const totalProd = await productCollection.find({ blocked: false })
+
         let categoryA = req.body.selectOption;
         let productData
 
         if (categoryA) {
-            productData = await productCollection.find({ category: categoryA, blocked: false }).skip(skip).limit(productsPerPage);
+
+            productData = await productCollection.aggregate([
+                {
+                    $match: { blocked: false, category: categoryA }
+                },
+                {
+                    $lookup: {
+                        from: 'offercollections',
+                        localField: 'productname',
+                        foreignField: 'productName',
+                        as: 'productOffer'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'offercollections',
+                        localField: 'category',
+                        foreignField: 'categoryName',
+                        as: 'categoryOffer'
+                    }
+                },
+                {
+                    $skip: skip
+                },
+                {
+                    $limit: productsPerPage
+                }
+            ]);
 
         } else {
-            productData = await productCollection.find({ blocked: false }).skip(skip).limit(productsPerPage);
+
+            productData = await productCollection.aggregate([
+                {
+                    $match: { blocked: false }
+                },
+                {
+                    $lookup: {
+                        from: 'offercollections',
+                        localField: 'productname',
+                        foreignField: 'productName',
+                        as: 'productOffer'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'offercollections',
+                        localField: 'category',
+                        foreignField: 'categoryName',
+                        as: 'categoryOffer'
+                    }
+                },
+                {
+                    $skip: skip
+                },
+                {
+                    $limit: productsPerPage
+                }
+            ]);
 
         }
 
@@ -56,7 +111,7 @@ exports.wishlistGet = (req, res) => {
 
     res.render('user/wishlist', { userData });
 };
-   
+
 
 exports.edituserPost = async (req, res) => {
     try {
@@ -110,15 +165,38 @@ exports.deleteaddressPost = async (req, res) => {
 };
 
 
+
 exports.singleproductGet = async (req, res) => {
     try {
         const userData = req.session.user
+        const productid = new ObjectId(req.params.id);
 
-        const productid = req.params.id;
-        const productDetails = await productCollection.findById(productid);
+        let productDetails = await productCollection.aggregate([
+
+            { $match: { _id: productid } },
+            {
+                $lookup: {
+                    from: 'offercollections',
+                    localField: 'productname',
+                    foreignField: 'productName',
+                    as: 'productOffer'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'offercollections',
+                    localField: 'category',
+                    foreignField: 'categoryName',
+                    as: 'categoryOffer'
+                }
+            }
+        ]);
+
         if (!productDetails) {
             return res.status(404).send('Product not found');
         }
+        productDetails = productDetails[0]
+        
 
         res.render('user/singleproduct', { productDetails, userData })
 
@@ -141,6 +219,7 @@ exports.userprofileGet = async (req, res) => {
         addressData = await addressCollection.find();
 
         const productData = await productCollection.find()
+
         const userData = req.session.user
 
         const user = await logDetails.findById(userId).populate('addressCollection');

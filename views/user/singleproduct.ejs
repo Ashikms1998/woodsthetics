@@ -21,21 +21,19 @@
                             <!-- main image -->
                             <div class="relative mb-6 lg:mb-10 lg:h-96">
                                 <img id="mainImage" data-fade-in="css-147n82m"
-                                    class="css-viwop1 object-contain w-full lg:h-full" css-147n82m"
-                                    src="\<%=productDetails.image[0]%>" alt="<%=productDetails.name%>"
+                                    class="css-viwop1 object-contain w-full lg:h-full" data-fade-in="css-147n82m"
+                                    src="\<%=productDetails?.image[0]%>" alt="<%=productDetails.name%>"
                                     style="object-fit: contain;">
                             </div>
 
                             <div class="flex mb-4">
                                 <div class="w-1/2 px-2">
-                                    <a  href="#" 
-                                    class="  w-full bg-gray-900 dark:bg-gray-600 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-800 dark:hover:bg-gray-700 block text-center"
-                                    id="addToCartBtn"
-                                        onclick="toggleCartButtons()">
+                                    <a href="#"
+                                        class="  w-full bg-gray-900 dark:bg-gray-600 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-800 dark:hover:bg-gray-700 block text-center"
+                                        id="addToCartBtn" onclick="toggleCartButtons()">
                                         Add to Cart
                                     </a>
-                                    <a href="/cart" data-product-id="<%=productDetails._id%>"
-                                        id="goToCartBtn"
+                                    <a href="/cart" data-product-id="<%=productDetails._id%>" id="goToCartBtn"
                                         class=" addToCart hidden w-full bg-gray-900 dark:bg-gray-600 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-800 dark:hover:bg-gray-700 text-center">
                                         Go to Cart
                                     </a>
@@ -57,7 +55,7 @@
                                         href="#">
                                         <img data-fade-in="css-147n82m"
                                             class="css-viwop1 u-full-width u-full-height css-147n82m"
-                                            src="\<%=productDetails.image[0]%>" alt="<%=productDetails.name%>"
+                                            src="\<%=productDetails?.image[0]%>" alt="<%=productDetails.name%>"
                                             style="object-fit: contain;"> </a>
                                     </a>
                                 </div>
@@ -65,7 +63,7 @@
                                     <a class="block border border-gray-200 hover:border-blue-400 dark:border-gray-700 dark:hover:border-blue-300"
                                         href="#">
                                         <img data-fade-in="css-147n82m" class=" css-viwop1  css-m5dkrx"
-                                            src="\<%=productDetails.image[1]%>" alt="<%=productDetails.name%>"
+                                            src="\<%=productDetails?.image[1]%>" alt="<%=productDetails.name%>"
                                             style="object-fit: contain;">
                                     </a>
                                 </div>
@@ -74,7 +72,7 @@
                                         href="#">
                                         <img data-fade-in="css-147n82m"
                                             class="css-viwop1 u-full-width u-full-height css-147n82m"
-                                            src="\<%=productDetails.image[2]%>" alt="<%=productDetails.name%>"
+                                            src="\<%=productDetails?.image[2]%>" alt="<%=productDetails.name%>"
                                             style="object-fit: contain;"> </a>
                                     </a>
                                 </div>
@@ -83,7 +81,7 @@
                                         href="#">
                                         <img data-fade-in="css-147n82m"
                                             class="css-viwop1 u-full-width u-full-height css-147n82m"
-                                            src="\<%=productDetails.image[3]%>" alt="<%=productDetails.name%>"
+                                            src="\<%=productDetails?.image[3]%>" alt="<%=productDetails.name%>"
                                             style="object-fit: contain;"> </a>
                                     </a>
                                 </div>
@@ -101,14 +99,46 @@
                         <div class="flex mb-4">
                             <div class="mr-4">
                                 <span class="font-bold text-gray-700 dark:text-gray-300">Price:</span>
-                                <span class="text-gray-600 dark:text-gray-300">Rs.<%=productDetails.price%></span>
+
+                                <% if(productDetails.productOffer[0] && productDetails.categoryOffer[0] &&
+                                    productDetails.productOffer[0].enable && productDetails.categoryOffer[0].enable) {
+                                    %>
+                                    <% const
+                                        productDiscount=productDetails.price*productDetails.productOffer[0].discount/100
+                                        const
+                                        categoryDiscount=productDetails.price*productDetails.categoryOffer[0].discount/100
+                                        const
+                                        discountedPrice=Math.floor(productDetails.price-Math.max(productDiscount,categoryDiscount))
+                                        %>
+                                        <span class="text-gray-600 dark:text-gray-300">Rs.<%=discountedPrice%></span>
+                                        <% }else if(productDetails.productOffer[0] &&
+                                            productDetails.productOffer[0].enable){ %>
+                                            <% const
+                                                discountedPrice=Math.floor(productDetails.price-(productDetails.price*productDetails.productOffer[0].discount/100))
+                                                %>
+                                                <span class="text-gray-600 dark:text-gray-300">Rs.<%=discountedPrice%>
+                                                        </span>
+
+                                                <% }else if(productDetails.categoryOffer[0] &&
+                                                    productDetails.categoryOffer[0].enable){ %>
+                                                    <% const
+                                                        discountedPrice=Math.floor(productDetails.price-(productDetails.price*productDetails.categoryOffer[0].discount/100))
+                                                        %>
+                                                        <span class="text-gray-600 dark:text-gray-300">Rs.
+                                                            <%=discountedPrice%></span>
+
+                                                        <%}else{%>
+
+                                                            <span class="text-gray-600 dark:text-gray-300">Rs.
+                                                                <%=productDetails.price%></span>
                             </div>
-                            <div>
-                                <span class="font-bold text-gray-700 dark:text-gray-300">Availability:</span>
-                                <span class="text-gray-600 dark:text-gray-300">
-                                    <%=productDetails.availability%>
-                                </span>
-                            </div>
+                            <%}%>
+                                <div>
+                                    <span class="font-bold text-gray-700 dark:text-gray-300">Availability:</span>
+                                    <span class="text-gray-600 dark:text-gray-300">
+                                        <%=productDetails.availability%>
+                                    </span>
+                                </div>
                         </div>
 
 
@@ -158,51 +188,50 @@
         });
     </script> -->
 
-    <script>
-        function toggleCartButtons() {
-            const addToCartBtn = document.getElementById('addToCartBtn');
-            const goToCartBtn = document.getElementById('goToCartBtn');
-    
-            // Toggle visibility
-            addToCartBtn.classList.add('hidden');
-            goToCartBtn.classList.remove('hidden');
-        }
-    </script>
+            <script>
+                function toggleCartButtons() {
+                    const addToCartBtn = document.getElementById('addToCartBtn');
+                    const goToCartBtn = document.getElementById('goToCartBtn');
 
-    <script>
-        const addToCart = document.querySelectorAll('.addToCart')
-  addToCart.forEach((btn) => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault()
-      const productId = btn.dataset.productId
-      console.log(productId);
-      
-      fetch('/cart', {
-          method: 'POST',
-          redirect: 'follow',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            productId
-          })
-        })
-        .then(res => {
-          if (res.redirected) {
-            const redirectURL = res.url;
-            return window.location.href = redirectURL;
-          } else {
-            return res.json()
-          }
-        })
-        .then(data => {
-          return showToast(data.message)
-        })
-        .catch(err => console.log(err))
+                    // Toggle visibility
+                    addToCartBtn.classList.add('hidden');
+                    goToCartBtn.classList.remove('hidden');
+                }
+            </script>
 
-    })
-  })
-    </script>
+            <script>
+                const addToCart = document.querySelectorAll('.addToCart')
+                addToCart.forEach((btn) => {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault()
+                        const productId = btn.dataset.productId
+                        console.log(productId);
+
+                        fetch('/cart', {
+                            method: 'POST',
+                            redirect: 'follow',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                productId
+                            })
+                        })
+                            .then(res => {
+                                if (res.redirected) {
+                                    const redirectURL = res.url;
+                                    return window.location.href = redirectURL;
+                                } else {
+                                    return res.json()
+                                }
+                            })
+                            .then(data => {
+                                return showToast(data.message)
+                            })
+                            .catch(err => console.log(err))
+                    })
+                })
+            </script>
 
 </body>
 

@@ -7,7 +7,7 @@ const { cartCollection } = require('../model/cartDB');
 const { addressCollection } = require('../model/addressDB')
 const { log, error } = require('console');
 const { orderCollection } = require('../model/orderDB');
-const { response } = require('express'); 
+const { response } = require('express');
 const { categoryCollection } = require('../model/categoryDB');
 
 
@@ -66,16 +66,19 @@ exports.otpPost = async (req, res) => {
     console.log(userEnteredOTP, "otp chEk", otp);
     if (userEnteredOTP === otp && new Date() <= expiration_time) {
         // await UserCollection.insertMany(data);
-        console.log("User registered successfully!!");
-        res.render('User/otpsuccess')
+        if (req.session.changeOTP) {
+            req.session.changeOTP = false
+            return res.render('user/changepassword');
+        } else {
+
+            console.log("User registered successfully!!");
+            res.render('User/otpsuccess')
+
+        }
     } else {
         req.session.error = "Invalid OTP. Please try again.";
         res.redirect("/otp")
     }
-
-
-
-
 };
 
 let otp;
@@ -217,13 +220,32 @@ exports.forgotpasswordPost = async (req, res) => {
             const user = await logDetails.findOne({ email: email });
 
             if (user) {
-                return res.render('user/changepassword');
+                otp = generateotp()
+                console.log(otp);
+                const emailText = `  Hi this is from Woodsthetics
+         Your OTP is: ${otp}`;
+                const mailOptions = {
+                    from: 'ashikms1998@gmail.com',
+                    to: email,
+                    subject: 'OTP Verification',
+                    text: emailText,
+                };
+                transporter.sendMail(mailOptions, (error, info) => {
+                    if (error) {
+                        console.log('Error sending OTP:', error);
+                    } else {
+                        console.log('OTP sent:', info.response);
+                        req.session.changeOTP = true
+                        return res.redirect('/otp')
+                    }
+                });
+
             }
         }
 
     } catch (error) {
         console.error("Error in forgot password get:", error);
-    
+
     }
 };
 

@@ -81,7 +81,28 @@ exports.checkoutpageGet = async (req, res) => {
 
         const userId = req.session.user._id;
         const checkoutPage = await cartCollection.findOne({ userId });
-        const checkoutProducts = await productCollection.find();
+        const checkoutProducts = await productCollection.aggregate([ 
+
+            {
+                $lookup: {
+                    from: 'offercollections',
+                    localField: 'productname',
+                    foreignField: 'productName',
+                    as: 'productOffer'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'offercollections',
+                    localField: 'category',
+                    foreignField: 'categoryName',
+                    as: 'categoryOffer'
+                }
+            }
+        ]);
+
+        console.log(checkoutProducts,'ahjsdjahsd');
+       
         const addresses = await logDetails.findById(userId).populate('addressCollection');
         const checkoutItems = [];
         let checkoutQuantity = [];
@@ -91,6 +112,7 @@ exports.checkoutpageGet = async (req, res) => {
         checkoutPage.products.forEach(product => {
             checkoutItems.push(...checkoutProducts.filter(element => element._id.equals(product.product)))
         });
+        console.log(checkoutItems,'askkaskdkad');
         res.render('user/checkoutpage', { checkoutPage, checkoutItems, checkoutQuantity, addresses, userData });
 
     } catch (error) {
@@ -210,6 +232,8 @@ exports.returnOrderPost = async (req, res) => {
 exports.razorpayPost = async (req, res) => {
    
     try {
+        
+        let orderTotal = req.body.orderTotal;
         const Razorpay = require('razorpay');
         var instance = new Razorpay({ key_id: 'rzp_test_yeL2dUJ4nZYpET', key_secret: 'CnCY5mqo5tDp947MvrThiIAH' })
         const cartDetails = await cartCollection.findOne({ userId: req.session.user._id });
@@ -223,14 +247,15 @@ exports.razorpayPost = async (req, res) => {
             )
         });
 
-        const prices = await Promise.all(productdetails.map(async (ele) => {
-            const product = await productCollection.findById(ele.product);
-            const qty = ele.quantity;
-            const price = product.price * qty;
-            return price;
-        }));
+        // const prices = await Promise.all(productdetails.map(async (ele) => {
+        //     const product = await productCollection.findById(ele.product);
+        //     const qty = ele.quantity;
+        //     const price = product.price * qty;
+        //     return price;
+        // }));
 
-        const totalPrice = prices.reduce((acc, price) => acc + price, 0);
+        // const totalPrice = prices.reduce((acc, price) => acc + price, 0);
+        const totalPrice = orderTotal;
         console.log(totalPrice);
         var options = {
         amount:totalPrice*100 ,  // amount in the smallest currency unit

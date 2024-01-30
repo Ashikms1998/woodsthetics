@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="/dist/output.css">
+</head>
+<%-include('admincomponents')%>
+
+  <body>
+    <div class="p-4 sm:ml-64">
+      <div class="p-4 border-2 border-gray-200 dark:border-gray-700 ">
+        <div class="px-10 pt-8 mb-3">
+          <a href="/addoffer"
+            class="bg-black hover:bg-slate-900 text-white font-semibold py-2 px-4 rounded transition duration-300 ease-in-out">
+            ADD OFFER+
+            </a>
+        </div>
+        <div class="shadow-lg rounded-lg overflow-hidden mx-4 md:mx-10 pt-11">
+          <table class="w-full table-fixed">
+            <thead>
+              <tr class="bg-gray-100">
+                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">sl No.</th>
+                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Product Name</th>
+                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Category Name</th>
+                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Discount</th>
+                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Expiry Date</th>
+                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Count</th>
+                <th class="w-1/4 py-4 px-6 text-left text-gray-600 font-bold uppercase">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white">
+              <% allOffers.forEach((row,index)=>{ %>
+                <tr>
+                  <td class="py-4 px-6 border-b border-gray-200">
+                    <%= index+1%>
+                </td>
+
+                  <td class="py-4 px-6 border-b border-gray-200">
+                      <%= row.productName%>
+                  </td>
+                  <td class="py-4 px-6 border-b border-gray-200">
+                    <%= row.categoryName%>
+                </td>
+                  <td class="py-4 px-6 border-b border-gray-200">
+                      <%= row.discount%>
+                  </td>
+                  <td class="py-4 px-6 border-b border-gray-200">
+                    <%= row.expiryDate%>
+                  </td>
+                  <td class="py-4 px-6 border-b border-gray-200">
+                    <%= row.count%>
+                  </td>
+                  <td class="py-4 pl-5 border-b border-gray-200">
+                    <div style="display: flex;">
+                      <a href="/editoffer/<%=row._id%>" class="text-sm font-bold gap-3">EDIT</a>
+
+                      <span class="px-4 text-sm font-bold gap-3">
+                      <button class="blockunblock" data-isblocked="<%=row.id%>">
+                        <%= row.enable ? 'LIST' : 'UNLIST' %>
+                      </button>
+                      </span>    
+                    </div>
+                    </td>
+                </div>
+              </td>  
+           </tr>
+          <%})%>
+        </tbody>
+        </table>   
+    </div>
+
+    
+
+  </body>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    const button = document.querySelectorAll('.blockunblock')
+    button.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const btnid = btn.getAttribute('data-isblocked')
+        // Show SweetAlert confirmation
+        Swal.fire({
+          title: 'Are you sure?',
+          text: 'This will List/Unlist the Offer',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Yes, proceed!',
+          cancelButtonText: 'Cancel',
+        }).then((result) => {
+          if (result.isConfirmed) {
+        fetch('/unlistOffer', {
+          method: "POST",
+          headers: {
+            'Content-type': 'application/json'
+          },
+          body: JSON.stringify({ btnid: btnid })
+        })
+          .then((response) => {
+            if (response.ok) {
+              console.log('Successful');
+              return response.json();
+            }
+          }).then((data) => {
+            console.log(data);
+            if (typeof (data.offer.enable) === 'boolean') {
+              if (data.offer.enable) {
+                btn.textContent = 'UNLIST'
+              } else {
+                btn.textContent = 'LIST'
+              }
+            } else {
+              console.error('Invalid type for data.offer.unlisted:', typeof data.offer.unlisted);
+            }
+          })
+          .catch((err) => {
+            console.error('Error:', err);
+          });
+        }
+        window.location.reload()
+      })
+    })
+  })
+  </script>
+</html>

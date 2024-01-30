@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Offer</title>
+  <!-- Add Tailwind CSS CDN link here -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/cropper/2.3.4/cropper.min.css'>
+  
+</head>
+
+<body class="bg-gray-100">
+  <div class="container mx-auto p-10">
+    <h1 class="text-2xl font-semibold mb-4">Add Offer</h1>
+
+    <form class="mb-0 space-y-2" action="/addoffer" method="post" ">
+
+
+
+      <!-- Form fields go here -->
+      <div class="form-group">
+      <label for="addBy" class="form-label block text-sm font-medium text-gray-600">Offer for</label>
+      <select id="addBy" name="addBy" class="form-select" required>
+        <option value="product">Product</option>
+        <option value="category">Category</option>
+      </select>
+      </div>
+
+       <!-- Product dropdown -->
+       <div class="mb-3" id="productDropdown">
+        <label for="product" class="form-label">Select Product:</label>
+        <select id="product" name="product" class="form-select mt-1 p-2 border border-gray-300 rounded w-full">
+            <%allProducts.forEach((product)=>{%>
+                <option value="<%=product.productname%>">
+                    <%=product.productname%>
+                </option>
+                <%})%>
+        </select>
+      </div>
+
+      <!-- Category dropdown -->
+      <div class="mb-3" id="categoryDropdown" style="display:none;">
+        <label for="category" class="form-label">Select Category:</label>
+        <select id="category" name="category" class="form-select mt-1 p-2 border border-gray-300 rounded w-full">
+            <%allCategory.forEach((category)=>{%>
+                <option value="<%=category.categoryname%>">
+                    <%=category.categoryname%>
+                </option>
+                <%})%>
+        </select>
+    </div>
+
+      <label for="discount" class=" form-label block text-sm font-medium text-gray-600">Discount:</label>
+      <input type="number" id="discount" name="discount" class="form-label mt-1 p-2 border border-gray-300 rounded w-full">
+      
+
+      <label for="count" class="form-label block text-sm font-medium text-gray-600">Count:</label>
+      <input type="number" id="count" name="count" class="form-control mt-1 p-2 border border-gray-300 rounded w-full">
+    
+      <label for="expiryDate" class="form-label block text-sm font-medium mt-3 text-gray-600">Expiry Date:</label>
+      <input type="date" id="expiryDate" name="expiryDate" class="form-control mt-1 p-2 border border-gray-300 rounded w-full">
+
+      <div class="flex items-center justify-center pt-5">
+      <button type="submit" class="btn bg-red-500 font-bold py-2 px-4 rounded">Add Offer</button>
+      </div>
+      <p class="text-danger">
+          <%=locals.msg?locals.msg: "" %>
+      </p>
+    </form>
+  </div>
+
+<!-- //Toggling Product and Category -->
+
+<script>
+
+  document.getElementById('addBy').addEventListener('change',function (){
+    const selectedOption = this.vale;
+
+    // Hide/show product or category dropdown based on selection
+
+    if(selectedOption==='product'){
+      document.getElementById('productDropdown').style.display = 'block';
+      document.getElementById('categoryDropdown').style.display = 'none';
+    }else{
+      document.getElementById('productDropdown').style.display = 'none';
+      document.getElementById('categoryDropdown').style.display = 'block';
+    }
+
+    // Reset the values of unselected dropdown
+
+    if (selectedOption === 'product') {
+        document.getElementById('category').value = '';
+    } else if (selectedOption === 'category') {
+        document.getElementById('product').value = '';
+    }
+  });
+
+</script>
+
+</body>
+
+</html>

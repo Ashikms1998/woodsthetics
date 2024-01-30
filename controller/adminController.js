@@ -299,18 +299,18 @@ exports.updateStatusPost = async (req, res) => {
 exports.blockProductPost = async (req, res) => {
     try {
         const productId = req.body;
-        console.log('ithan product', productId);
+       
         const newProductid = productId.btnid
-        console.log('ith productId mathrm', newProductid);
+       
         const product = await productCollection.findById(newProductid);
         if (!product) {
             return res.status(404).send('product not found');
         }
-        console.log(product.blocked);
+       
         product.blocked = !product.blocked;
 
         await product.save();
-        console.log('User updated:', product);
+       
         return res.status(200).send({ product: product });
 
 
@@ -326,14 +326,14 @@ exports.blockedCategoryPost = async (req, res) => {
     try {
 
         const categoryId  = req.body.btnid;
-        console.log('thisi is cid',categoryId);
+
         const category = await categoryCollection.findById(categoryId);
 
 
 
         let categoryName = category.categoryname
-        console.log('this is the categotry name', categoryName);
-        // let result = await productCollection.find({category:categoryName})
+        
+        
         if(!category.blockStatus){
             result=await productCollection.updateMany({category:categoryName},{$set:{blocked:true}})
         }else{
@@ -556,7 +556,6 @@ exports.admindashboardGetWeekly = async (req, res) => {
 
         })
 
-        console.log(data,);
 
         let orderCount = data.length;
         const totalForDay = data.reduce((acc, order) => acc + order.total, 0);

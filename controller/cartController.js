@@ -23,8 +23,30 @@ exports.cartGet = async (req, res) => {
         const userId = req.session.user._id
         const a = await cartCollection.findOne({ userId });
         createCart = a ?? ''
-        const allProducts = await productCollection.find()
+
+         const allProducts = await productCollection.aggregate([
+           
+            {
+                $lookup: {
+                    from: 'offercollections',
+                    localField: 'productname',
+                    foreignField: 'productName',
+                    as: 'productOffer'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'offercollections',
+                    localField: 'category',
+                    foreignField: 'categoryName',
+                    as: 'categoryOffer'
+                }
+            }
+        ]);
+
+
         let products = []
+
 
         const userData = req.session.user
 
@@ -36,6 +58,11 @@ exports.cartGet = async (req, res) => {
             createCart.products.forEach(product => {
                 products.push(...allProducts.filter(ele => ele._id.equals(product.product)))//each set.athinte akathe product from db
             });
+
+            console.log(createCart,'CC');
+            console.log(products,'pp');
+            console.log(userData,'uu');
+            
 
             return res.render('user/cart', { createCart, products, userData })
 

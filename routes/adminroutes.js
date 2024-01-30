@@ -40,7 +40,7 @@ const { loginGet, loginPost, logoutadmin, userGet, categoryGet, addcategoryPost,
 
 // Coupon Controller
 
-const {couponGet,addcouponGet,addcouponPost,deletecouponPost,editcouponGet,editcouponPost} = require('../controller/couponController')
+const {couponGet,addcouponGet,addcouponPost,deletecouponPost,editcouponGet,editcouponPost,offerGet,addofferGet,addofferPost,editofferGet,editofferPost,unlistofferPost} = require('../controller/couponController')
 
 
 router.get('/adminhome', adminsession, homeGet);
@@ -63,7 +63,12 @@ router.get('/addcoupon',adminsession,addcouponGet);
 router.post('/deletecoupon/:_id', adminsession, deletecouponPost)
 router.get('/editcoupon/:_id', adminsession, editcouponGet);
 router.post('/editcoupon/:_id', adminsession, editcouponPost);
-
+router.get('/offermanagement',adminsession,offerGet);
+router.get('/addoffer',adminsession,addofferGet);
+router.post('/addoffer',adminsession,addofferPost)
+router.get('/editoffer/:_id',adminsession,editofferGet)
+router.post('/editoffer/:_id',adminsession,editofferPost)
+router.post('/unlistOffer',adminsession,unlistofferPost)
 // post
 
 router.post('/adminlogin', loginPost);
