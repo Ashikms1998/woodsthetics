@@ -78,8 +78,8 @@ exports.checkoutpageGet = async (req, res) => {
             return res.redirect('/login');
         }
         const userData = req.session.user
-
         const userId = req.session.user._id;
+        const wallet = await walletCollection.findOne({ userid:userId });
         const checkoutPage = await cartCollection.findOne({ userId });
         const checkoutProducts = await productCollection.aggregate([ 
 
@@ -100,8 +100,6 @@ exports.checkoutpageGet = async (req, res) => {
                 }
             }
         ]);
-
-        console.log(checkoutProducts,'ahjsdjahsd');
        
         const addresses = await logDetails.findById(userId).populate('addressCollection');
         const checkoutItems = [];
@@ -112,7 +110,7 @@ exports.checkoutpageGet = async (req, res) => {
         checkoutPage.products.forEach(product => {
             checkoutItems.push(...checkoutProducts.filter(element => element._id.equals(product.product)))
         });
-        res.render('user/checkoutpage', { checkoutPage, checkoutItems, checkoutQuantity, addresses, userData });
+        res.render('user/checkoutpage', { checkoutPage, checkoutItems, checkoutQuantity, addresses, userData, wallet });
 
     } catch (error) {
         console.log("Error in checkoutGet:", error);

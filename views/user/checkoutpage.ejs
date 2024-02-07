@@ -244,8 +244,19 @@
                                                     name="paymentMethod">
                                                 <span>Wallet</span>
                                             </div>
-                                            <p> Wallet Balance : <span id="walletBalance"></span>
+                                            <div>
+                                            <p> Wallet Balance :
+                                            <% if (wallet&&wallet.balance!=undefined) { %>
+                                            <h1 class="font-bold flex  text-gray-900 title-font rounded-md  py-4  text-sm   focus:z-10 ">₹
+                                            <%=wallet.balance%>
+                                            </h1>
+                                            <% }else{ %>
+                                            <h1 class="text-sm font-bold leading-9 flex text-gray-900 title-font">
+                                            ₹ 0</h1>
+                                            <% } %>
+                                            <span id="walletBalance"></span>
                                             </p>
+                                            </div>
                                         </div>
                                         <div>
                                             <input type="radio" value="COD"
@@ -322,15 +333,22 @@
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({orderTotal,paymentMethod})
-            }).then(response => response.json())
-            .then(data=>{
-                console.log('Response from server:', data);
-                confirmOrder()
             })
-            .catch(error => {
-                console.error('Error:', error);
-            })
-         } else if (paymentMethod === 'COD') {
+        .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+        })
+        .then(data => {
+        console.log('Response from server:', data);
+        confirmOrder();
+        })
+        .catch(error => {
+        console.error('Error:', error);
+        alert('Not Enough Cash in the Wallet. Please try again.');
+       });
+        } else if (paymentMethod === 'COD') {
             confirmOrder()
         }
 

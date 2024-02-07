@@ -4,7 +4,8 @@ const { logDetails } = require('../model/userModel');
 exports.walletGet = async(req,res)=>{
     try {
         const userData = req.session.user;
-        const walletData = await walletCollection.find()
+        const userId = req.session.user._id
+        const walletData = await walletCollection.find({userid:userId})
         res.render('user/wallet',{userData,walletData})
         
     } catch (error) {
@@ -19,15 +20,51 @@ exports.walletPost = async(req,res)=>{
            return res.redirect('/login');
         }else{
             let userid = req.session.user._id;
-            let orderTotal = req.body.orderTotal;
+            let orderTotal = Number(req.body.orderTotal);
+            console.log(orderTotal,'ccceeen');
+            const walletCheck = await walletCollection.find({userid:userid});
+            if(!walletCheck)
+            {
+                return res.status(404).send({ message: "Wallet not found." });
+            }else{
             let walletAmount = await walletCollection.findOne({ userid }, { balance: 1 });
-            console.log(walletAmount,'kiki3');
-            if(walletAmount>=orderTotal){
-
+            console.log(walletAmount,'lelelelelele');
+            console.log(walletAmount.balance,'22lelelelelele');
+            console.log(orderTotal,'ccceeen');
+            
+            if(walletAmount.balance>=orderTotal)
+            {
+                console.log(walletAmount,orderTotal);
+                await walletCollection.findOneAndUpdate(
+                    {userid:userid},
+                    {$inc:{balance:-orderTotal}},
+                    {new:true,upsert:true}
+                );
+                await walletCollection.findOneAndUpdate(
+                    {userid:userid},
+                    {
+                        $push:{
+                            wallethistory:{
+                                process:"Debited for wallet payment",
+                                amount:orderTotal,
+                                date:Date.now(),
+                            }
+                        }
+                    },
+                    {new:true}
+                );
+            // Send a success response
+            return res.status(200).send({ message: "Sufficient balance." });
+            } else {
+            // Send an error response
+            return res.status(400).send({ message: "Insufficient balance." });
             }
         }
+    }
     } catch (error) {
         console.log(error,'Error in Wallet Post');
+        return res.status(500).send("Error while processing wallet payment");
+
     }
 };
 
