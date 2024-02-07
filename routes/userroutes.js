@@ -16,6 +16,10 @@ const{cartGet,emptycartGet,cartPost,updatecartPost,deletecartproductPost,applypr
 //Order Controller
 const{orderPageGet,confirmationPost,checkoutpageGet,cancelOrderPost,orderplacedGet,returnOrderPost,razorpayPost} = require('../controller/orderController')
 
+//Wallet Controller
+const{walletGet,walletPost} = require('../controller/walletController');
+
+
 //Login Controller Routes
 
 router.get('/login', loginGet)
@@ -40,6 +44,8 @@ router.get('/emptycart', session,isblock,emptycartGet);
 router.post('/updateCart' ,updatecartPost);
 router.post('/deletecartproduct',deletecartproductPost);
 router.post('/applyPromo',applypromoPost)
+
+
 //Order Controller
 
 router.get('/orderPage/:id',orderPageGet)
@@ -63,5 +69,9 @@ router.post('/editaddress/:id',editaddressPost);
 router.post('/deleteaddress/:id',deleteaddressPost);
 router.get('/',(req,res)=>res.redirect('/home'))
 
+//wallet Controller Routes
+
+router.get('/wallet',session,walletGet)
+router.post('/wallet',session,walletPost)
 
 module.exports = router;

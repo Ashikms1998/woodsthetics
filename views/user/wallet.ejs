@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/dist/output.css">
+</head>
+
+<body>
+    <%-include ('navbar') %>
+
+        <div>
+            <div class="container flex flex-col items-start justify-start mt-5 ml-4 mx-auto md:flex-row">
+                <% if (walletData&&walletData[0].balance!=undefined) { %>
+                    <h1 class="text-lg font-bold leading-9 flex items-center text-gray-900 title-font md:mb-0 ">WALLET:₹
+                        <%=walletData[0].balance%>
+                    </h1>
+                    <% }else{ %>
+                        <h1 class="text-lg font-bold leading-9 flex items-center text-gray-900 title-font md:mb-0 ">
+                            WALLET:₹ 0</h1>
+                        <% } %>
+            </div>
+        </div>
+
+        <div class="py-12">
+
+            <!-- Desktop Responsive Start -->
+            <div class="hidden sm:flex flex-col justify-start items-start">
+
+                <div class="container flex flex-col items-start justify-center p-6 mx-auto md:flex-row">
+                    <h1 class="text-xl leading-9 flex items-center font-extrabold text-gray-900 title-font md:mb-0 ">
+                        Wallet History</h1>
+
+                </div>
+
+                <table class="w-full mt-16 whitespace-nowrap">
+                    <thead aria-label="table heading"
+                        class="w-full h-16 text-left py-6 bg-gray-50 border-gray-200 dark:bg-gray-800 border-b">
+                        <tr>
+                            <th
+                                class="text-base font-medium leading-4 text-gray-600 dark:text-white pl-6 lg:pl-20 2xl:pl-52">
+                                PROCESS</th>
+                            <th
+                                class="text-base font-medium leading-4 text-gray-600 dark:text-white pl-6 lg:pl-20 2xl:pl-52">
+                                AMOUNT</th>
+                            <th
+                                class="text-base font-medium leading-4 text-gray-600 dark:text-white pl-6 lg:pl-20 2xl:pl-52">
+                                DATE</th>
+                        </tr>
+                    </thead>
+                    <tbody class="w-full text-left">
+                        <% walletData[0].wallethistory.forEach((wallet)=>{%>
+                            <!-- Repeat this block for each table row -->
+                            <tr class="border-gray-200 border-b">
+                                <th class="mt-10 text-base font-medium leading-4 text-gray-600 pl-6 lg:pl-20 2xl:pl-52">
+                                    <p class="text-base leading-4 text-gray-800 dark:text-white">
+                                        <%=wallet.process%>
+                                    </p>
+                                </th>
+                                <th class="my-10 pl-6 lg:pl-20 2xl:pl-52">
+                                    <p class="dark:text-white">
+                                        <%=wallet.amount%>
+                                    </p>
+                                </th>
+                                <th class="mt-10 text-base font-medium leading-4 text-gray-600 pl-6 lg:pl-20 2xl:pl-52">
+                                    <p class="text-base leading-4 text-gray-800 dark:text-white">
+                                        <%=wallet.date.toLocaleDateString()%>
+                                    </p>
+                                </th>
+                                <% }); %>
+                            </tr>
+                            <!-- End of table row block -->
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        <%-include ('footer') %>
+</body>
+
+</html>

@@ -68,7 +68,7 @@
                     </div>
                 </div>
 
-
+                
                 <div class="border-t border-gray-200 px-4 py-5 sm:p-0">
                     <dl class="sm:divide-y sm:divide-gray-200">
                         <div class="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -90,6 +90,11 @@
                     </dl>
                 </div>
             </div>
+        </div>
+
+
+        <div class="flex justify-start pl-10">
+            <button class="clickable-row px-2 py-2 border rounded-lg font-bold text-white" style="background-color: rgb(4, 79, 4);"  data-href="/wallet">GO TO WALLET</button>
         </div>
 
         <!--  Address -->
@@ -219,6 +224,7 @@
                 Address</button>
         </div>
 
+        
         <!-- //button model -->
 
         <div class=" mt-10 flex w-full md:w-60 justify-center">
@@ -351,7 +357,7 @@
                             </td>
 
                             <td class="text-sm text-gray-900 font-light px-4 py-4 whitespace-nowrap">
-                                COD
+                                <%=pro.paymentMethod %>
                             </td>
                             <td class="text-sm text-gray-900 font-light px-4 py-4 whitespace-nowrap">
                                 <%=pro.address?.address%>,<br>

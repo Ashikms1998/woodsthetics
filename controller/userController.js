@@ -285,3 +285,4 @@ exports.filterCategoryGet = async (req, res) => {
     const categoryFilter = await categoryCollection.find()
     console.log(categoryFilter);
 };
+

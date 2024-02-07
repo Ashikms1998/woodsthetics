@@ -57,6 +57,10 @@ const orderSchema = new mongoose.Schema({
         type:Number,
         required:true
     },
+    paymentMethod:{
+        type:String,
+        
+    },
     address:addressSchema,},{timestamps:true});
 
 const orderCollection = new mongoose.model('orderCollection',orderSchema);

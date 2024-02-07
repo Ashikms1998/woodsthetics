@@ -277,12 +277,11 @@
 
 <script>
     const orderTotal = document.getElementById('orderTotal').innerText.substring(1);
-    
+
     document.getElementById('paymentForm').onsubmit = function (event) {
         event.preventDefault();
         console.log('hello');
         const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
-
         if (paymentMethod === 'UPI') {
             
             fetch('/razorpay', {
@@ -290,7 +289,7 @@
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({orderTotal}),
+                body: JSON.stringify({orderTotal,paymentMethod}),
                
             }).then(response => response.json())
                 .then(data => {
@@ -317,7 +316,21 @@
 
         } else if (paymentMethod === 'Wallet') {
             console.log('wallet here');
-        } else if (paymentMethod === 'COD') {
+            fetch('/wallet',{
+            method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({orderTotal,paymentMethod})
+            }).then(response => response.json())
+            .then(data=>{
+                console.log('Response from server:', data);
+                confirmOrder()
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            })
+         } else if (paymentMethod === 'COD') {
             confirmOrder()
         }
 
@@ -327,12 +340,11 @@
 
 
 <script>
-    function 
-    
-    confirmOrder() {
+    function confirmOrder() {
 
+        console.log('here');
         const selectedRadio = document.querySelector('input[name="default-radio-12"]:checked');
-
+        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
         let selectedAddressData = null;
         if (selectedRadio) {
 
@@ -350,7 +362,7 @@
         }
         console.log('Selected Address Data11:', selectedAddressData);
         const orderDetails = {
-            selectedAddressData,
+            selectedAddressData,paymentMethod
         };
 
         fetch('/confirmation', {

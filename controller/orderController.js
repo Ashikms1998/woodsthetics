@@ -10,6 +10,7 @@ const { log, error } = require('console');
 const { orderCollection } = require('../model/orderDB');
 const { response } = require('express');
 const { categoryCollection } = require('../model/categoryDB');
+const {walletCollection} = require('../model/walletDB');
 
 var instance = new Razorpay({
     key_id: 'rzp_test_yeL2dUJ4nZYpET',
@@ -17,13 +18,12 @@ var instance = new Razorpay({
 });
 
 
-
 exports.confirmationPost = async (req, res) => {
-    console.log("cartDetails");
 
     try {
         const address = req.body.orderDetails.selectedAddressData;
         const userId = req.session.user._id
+        const paymentMethod = req.body.orderDetails.paymentMethod;
         const Ordernumber = orderGenerator()
         let totalPrice;
         
@@ -50,13 +50,13 @@ exports.confirmationPost = async (req, res) => {
         totalPrice = prices.reduce((acc, price) => acc + price, 0);
         }
         
-        
         const allOrder = new orderCollection({
             userId: userId,
             productdetails: productdetails,
             Ordernumber: Ordernumber,
             total: totalPrice,
-            address: address
+            address: address,
+            paymentMethod:paymentMethod
         })
 
         await allOrder.save()
@@ -112,7 +112,6 @@ exports.checkoutpageGet = async (req, res) => {
         checkoutPage.products.forEach(product => {
             checkoutItems.push(...checkoutProducts.filter(element => element._id.equals(product.product)))
         });
-        console.log(checkoutItems,'askkaskdkad');
         res.render('user/checkoutpage', { checkoutPage, checkoutItems, checkoutQuantity, addresses, userData });
 
     } catch (error) {
@@ -124,13 +123,12 @@ exports.checkoutpageGet = async (req, res) => {
 
 exports.cancelOrderPost = async (req, res) => {
     try {
-
         const oId = req.body.oId
         // const status = req.body.status
         const product = await orderCollection.findById(oId);
         const productId = product.productdetails[0].productId;
         const productQuantity = product.productdetails[0].quantity;
-
+        const orderDetails = await orderCollection.findById(oId);
         const update = await orderCollection.findOneAndUpdate(
             { _id: oId },
             { $set: { status: "cancelled" } },
@@ -143,7 +141,27 @@ exports.cancelOrderPost = async (req, res) => {
             { $inc: { quantity: productQuantity } }, //update the quantity
             { new: true }
         );
-   
+            if(orderDetails.paymentMethod!='COD'){
+                await walletCollection.findOneAndUpdate(
+                    {userid:req.session.user._id},
+                    {$inc:{balance:orderDetails.total}},
+                    {new:true,upsert:true}
+                );
+                await walletCollection.findOneAndUpdate(
+                    {userid:req.session.user._id},
+                    {
+                        $push:{
+                            wallethistory:{
+                                process:"Refund for Cancelled Order",
+                                amount:orderDetails.total,
+                                date:Date.now()
+
+                            }
+                        }
+                    },
+                    {new:true}
+                );
+            }
 
         res.status(200).send('Order is canceled');
     } catch (error) {
@@ -207,6 +225,7 @@ exports.returnOrderPost = async (req, res) => {
         const product = await orderCollection.findById(oId);
         const productId = product.productdetails[0].productId;
         const productQuantity = product.productdetails[0].quantity;
+        const orderDetails = await orderCollection.findById(oId);
 
         const update = await orderCollection.findOneAndUpdate(
             { _id: oId },
@@ -220,6 +239,25 @@ exports.returnOrderPost = async (req, res) => {
             { $inc: { quantity: productQuantity } },
             { new: true } //update the quantity
         
+        );
+        await walletCollection.findOneAndUpdate(
+            {userid:req.session.user._id},
+            {$inc:{balance:orderDetails.total}},
+            {new:true,upsert:true}
+        );
+        await walletCollection.findOneAndUpdate(
+            {userid:req.session.user._id},
+            {
+                $push:{
+                    wallethistory:{
+                        process:"Refund for Returned Product",
+                        amount:orderDetails.total,
+                        date:Date.now()
+
+                    }
+                }
+            },
+            {new:true}
         );
        
         res.status(200).send('Order is returned');
