@@ -95,21 +95,20 @@
       const reader = new FileReader();
       let currentIndex = event.target.dataset.index;
       const output = document.getElementById(`imagePreview${currentIndex}`);
-      console.log(output);
+      
       // Clear previous previews
       // output.innerHTML = '';
 
 
       // Iterate through selected files
       const file = event.target.files[0]
-      console.log(file);
+      
       // Create a new image element for each file
       const img = document.createElement('img');
       img.className = 'preview-image'; // Optional: Add a class for styling
       reader.onload = function () {
         output.src = reader.result;
       };
-      console.log("iimaage", img);
       reader.readAsDataURL(file);
 
       // output.appendChild(img);

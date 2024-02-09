@@ -155,7 +155,7 @@
                     return response.json();
                   }
                 }).then((data) => {
-                  console.log(data);
+                  
                   if (typeof (data.category.blockStatus) === 'boolean') {
                     if (data.category.blockStatus) {
                       btn.textContent = 'List'

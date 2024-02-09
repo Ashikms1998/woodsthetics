@@ -135,7 +135,7 @@ exports.loginPost = (req, res) => {
     const { username, password } = req.body
     if (admindata.adminName == username && admindata.passcode == password) {
         req.session.adminID = true;
-        console.log(req.session.adminID);
+
         res.render('admin/admindashboard');
     } else {
         res.render("admin/adminlogin", { wrg: "wrong credentials" })
@@ -152,7 +152,7 @@ exports.addcategoryPost = async (req, res) => {
 
 
         const existingCategory = await categoryCollection.findOne({ categoryname: category });
-        console.log(existingCategory);
+        
         const existingDescription = await categoryCollection.findOne({ description: newDescription })
 
         if (existingCategory) {
@@ -167,7 +167,7 @@ exports.addcategoryPost = async (req, res) => {
                 description: newDescription,
                 blockStatus: false
             })
-            console.log(Categorydata, 'scene aan');
+            
             await Categorydata.save();
             return res.redirect('/categorymanagement');
 
@@ -180,7 +180,7 @@ exports.addcategoryPost = async (req, res) => {
 
 exports.editproductPost = async (req, res) => {
     const indices = req.body.index.split(',')
-    console.log(indices);
+    
     const id = req.params._id
     const productdata = await productCollection.findById(id);
     if (req.files && req.files.length > 0) {
@@ -217,7 +217,7 @@ exports.editproductPost = async (req, res) => {
 exports.deleteproductGet = async (req, res) => {
 
     const productid = req.params._id
-    console.log(productid);
+    
     try {
         const deleteProduct = await productCollection.updateOne({ _id: productid }, { $set: { quantity: 0 } });
 
@@ -285,7 +285,7 @@ exports.updateStatusPost = async (req, res) => {
             }
             user.blocked = !user.blocked;
             await user.save();
-            console.log('User updated:', user);
+           
             return res.status(200).send({ user: user });
         } catch (error) {
             console.log("Error:", error);
@@ -340,22 +340,16 @@ exports.blockedCategoryPost = async (req, res) => {
             result=await productCollection.updateMany({category:categoryName},{$set:{blocked:false}})
         }
 
-        
-        // result.forEach((prod)=>{
-        //     prod.blocked=true
-        // })
-        // await result.save()
-        console.log("the blocked list",result);
 
         if (!category) {
             return res.status(404).send('product not found');
         }
-        console.log(category.blockStatus)
+        
 
         category.blockStatus = !category.blockStatus;
 
         await category.save();
-        console.log('User updated:', category);
+        
         return res.status(200).send({ category: category });
 
 
@@ -366,10 +360,10 @@ exports.blockedCategoryPost = async (req, res) => {
 }
 
 exports.logoutadmin = (req, res) => {
-    console.log("logoutmunp", req.session.adminID);
+   
     if (req.session.adminID) {
         req.session.adminID = false;
-        console.log(req.session.adminID);
+        
 
         res.redirect('/adminloginget');
     } else {

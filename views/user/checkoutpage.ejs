@@ -291,7 +291,6 @@
 
     document.getElementById('paymentForm').onsubmit = function (event) {
         event.preventDefault();
-        console.log('hello');
         const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
         if (paymentMethod === 'UPI') {
             
@@ -304,7 +303,7 @@
                
             }).then(response => response.json())
                 .then(data => {
-                    console.log(data);
+                    
                     var options = {
                         "key": "rzp_test_yeL2dUJ4nZYpET", // Enter the Key ID generated from the Dashboard
                         "amount": 300, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
@@ -326,7 +325,7 @@
                 }).catch((rej) => console.log(rej))
 
         } else if (paymentMethod === 'Wallet') {
-            console.log('wallet here');
+            
             fetch('/wallet',{
             method: 'POST',
                 headers: {
@@ -360,7 +359,6 @@
 <script>
     function confirmOrder() {
 
-        console.log('here');
         const selectedRadio = document.querySelector('input[name="default-radio-12"]:checked');
         const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
         let selectedAddressData = null;
@@ -378,7 +376,7 @@
             console.error('No address selected');
             return; // Stop the function if no address is selected
         }
-        console.log('Selected Address Data11:', selectedAddressData);
+        
         const orderDetails = {
             selectedAddressData,paymentMethod
         };

@@ -205,7 +205,6 @@
                     btn.addEventListener('click', (e) => {
                         e.preventDefault()
                         const productId = btn.dataset.productId
-                        console.log(productId);
 
                         fetch('/cart', {
                             method: 'POST',

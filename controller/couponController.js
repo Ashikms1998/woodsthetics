@@ -24,7 +24,7 @@ exports.addcouponGet = (req,res)=>{
 
 exports.addcouponPost =async (req,res)=>{
     try {
-        console.log('hai from coupon post');
+        
         const newcoupon = new couponCollection({
             couponName: req.body.couponname,
             couponCode: req.body.couponcode,
@@ -42,9 +42,9 @@ exports.addcouponPost =async (req,res)=>{
 };
 
 exports.deletecouponPost = async (req,res)=>{
-    console.log("hellow from deleye");
+    
     const couponid = req.params._id
-    console.log('for delete',couponid);
+    
     try {
         
         const deleteProduct = await couponCollection.findByIdAndDelete(couponid)

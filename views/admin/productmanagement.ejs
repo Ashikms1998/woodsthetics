@@ -138,7 +138,7 @@
                 return response.json();
               }
             }).then((data) => {
-              console.log(data);
+              
               if (typeof (data.product.blocked) === 'boolean') {
                 if (data.product.blocked) {
                   btn.textContent = 'List'

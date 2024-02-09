@@ -72,7 +72,7 @@ exports.otpPost = async (req, res) => {
         } else {
 
             console.log("User registered successfully!!");
-            res.render('User/otpsuccess')
+            res.render('user/otpsuccess')
 
         }
     } else {
@@ -84,11 +84,11 @@ exports.otpPost = async (req, res) => {
 let otp;
 
 exports.resendGet = async (req, res) => {
-    console.log("hai");
+    
     const user = req.session.signupdata
-    console.log('1', user);
+    
     const userDetails = await logDetails.findOne({ email: user.email });
-    console.log("here vro", userDetails);
+    
     if (user) {
         otp = generateotp()
         console.log(otp);
@@ -108,12 +108,7 @@ exports.resendGet = async (req, res) => {
                 res.redirect('/otp')
             }
         });
-        // const saltRounds = 10;
-        // const hashedPassword = await bcrypt.hash(userDetails.password, saltRounds);
-        // userDetails.password = hashedPassword;
-        // console.log(hashedPassword);
-        // await userDetails.save()
-        // console.log(userDetails);
+      
         return res.redirect('/otp')
     }
 };
@@ -172,7 +167,7 @@ exports.signupPost = async (req, res) => {
             const saltRounds = 10;
             const hashedPassword = await bcrypt.hash(signupdata.password, saltRounds);
             signupdata.password = hashedPassword;
-            console.log(hashedPassword);
+            
             await signupdata.save()
             req.session.signupdata = signupdata;
             console.log(signupdata);
@@ -289,7 +284,7 @@ exports.logoutGet = (req, res) => {
                 if (err) {
                     console.error('Error', err);
                 }
-                console.log("session destroyed sucessfully");
+                
                 res.redirect('/login');
             });
 

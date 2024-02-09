@@ -70,7 +70,6 @@
   form1.addEventListener("submit", (e) => {
 
     // e.preventDefault();
-    console.log('submit button is clicked')
     let n = username.value.trim();
     let email = emailBx.value;
     let pass = password.value;
@@ -126,8 +125,6 @@
       );
     else if (pass !== confirmpass) message.push("Passwords doesn't match");
 
-
-    console.log(message);
     if (message.length > 0) {
       e.preventDefault();
       error.textContent = message.join("");

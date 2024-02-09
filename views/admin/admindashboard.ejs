@@ -49,7 +49,6 @@ async function fetchSevenData() {
   try {
     const response = await fetch('/admindashboard/Weeklyreport');
     const data = await response.json();
-    console.log(data);
 
     if(data){
       
@@ -60,8 +59,7 @@ data.dailyData.map((item,index)=>yValues[index]=item.totalPrice)
 
 data.dailyData.map((item,index)=>xValues[index]=item.date)
 
-console.log(xValues,"my last week date");
-console.log(yValues,"my total price");
+
 new Chart(LastWeekChartOrder, {
   type: "bar",
   data: {
@@ -112,7 +110,7 @@ fetchSevenData();
         const data = await response.json();
     
         if(data){
-        console.log(data.dailyData,":it ok");
+        
     
     const xValues = [];
     const yValues =[];
@@ -122,8 +120,6 @@ fetchSevenData();
       xValues.push(item.date)
       
      });
-    console.log(xValues,"my last week date");
-    console.log(yValues,"my total price");
     
 
     
@@ -171,7 +167,7 @@ fetchSevenData();
         const data = await response.json();
     
         if(data){
-        console.log(data.HourlyData,":it ok hourly");
+        
 
         const xValues =['','','','','','','',]; 
 const yValues =[0,0,0,0,0,0,0];  
@@ -181,8 +177,7 @@ const yValues =[0,0,0,0,0,0,0];
       xValues.push(item.date)
       
      });
-     console.log(xValues,"my last week date");
-    console.log(yValues,"my total price");
+    
     
 
     

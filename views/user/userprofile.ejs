@@ -442,7 +442,6 @@
                 const state = document.querySelector('.state-addAdress').value;
                 const city = document.querySelector('.city-address').value;
                 const country = document.querySelector('.country-address').value;
-                console.log(state, 'state');
 
                 var textRegex = /^[A-Za-z\s]+$/;
 
@@ -639,56 +638,6 @@
 
         <!-- script for address validation -->
 
-        <!-- <script>
-
-function validateForm(e) {
-    e.preventDefault();
-    // Get form values
-    var pin = document.getElementById('pin').value;
-    console.log(pin);
-    // var address = document.getElementById('address').value.trim(); // Corrected ID
-    // var state = document.getElementById('state').value.trim();
-    // var city = document.getElementById('city').value.trim();
-    // var country = document.getElementById('country').value.trim();
-
-    
-    // Regular expressions for validation
-    // var addressRegex = /^[A-Za-z0-9\s,.'-]+$/;
-    var pinRegex = /^\d{6}$/;
-    // var textRegex = /^[A-Za-z\s]+$/;
-
-    // Reset previous error messages
-    // document.getElementById("addressError").innerHTML = "";
-    document.getElementById("pinError").innerHTML = "";
-    // document.getElementById("sccError").innerHTML = "";
-
-    // Validate full name
-
-    // Validate PIN
-    // if (!pinRegex.test(pin)) {
-    //   document.getElementById("pinError").innerHTML = "Invalid PIN.";
-    
-    //   return false;
-    // }
-
-//     if (!addressRegex.test(address)) {
-//     document.getElementById("addressError").innerHTML = "Invalid address. Please enter only alphabetic characters";
-//       e.preventDefault();
-//    return false;
-// }
-
-//     // Validate  state, and city and country
-//     if ( !textRegex.test(state) || !textRegex.test(city) || !textRegex.test(country)) {
-//       document.getElementById("sccError").innerHTML = "Invalid input. Please enter only alphabetic characters without spaces or special characters.";
-//       e.preventDefault();
-//       return false;
-//     }
-
-
-//     return true;
-//   }
-
-</script> -->
 
 <!-- script for orderPage -->
 

@@ -59,11 +59,6 @@ exports.cartGet = async (req, res) => {
                 products.push(...allProducts.filter(ele => ele._id.equals(product.product)))//each set.athinte akathe product from db
             });
 
-            console.log(createCart,'CC');
-            console.log(products,'pp');
-            console.log(userData,'uu');
-            
-
             return res.render('user/cart', { createCart, products, userData })
 
         }
@@ -124,11 +119,11 @@ exports.cartPost = async (req, res) => {
 exports.updatecartPost = async (req, res) => {
     try {
         const pId = req.body.itemId;
-        console.log(req.body.itemId);
+        
         const userId = req.session.user._id;
-        console.log(userId, "uid here");
+        
         const quantity = req.body.amount;
-        console.log(quantity, "quantity here");
+       
 
         const product = await productCollection.findById(pId)
         if (product.quantity < quantity) {
@@ -148,7 +143,7 @@ exports.updatecartPost = async (req, res) => {
             },
             { new: true }
         );
-        console.log("working");
+        
         return res.status(200).json({ message: "success" })
 
     } catch (error) {
@@ -159,11 +154,11 @@ exports.updatecartPost = async (req, res) => {
 
 exports.deletecartproductPost = async (req, res) => {
     const productid = req.body.productId
-    console.log('here it is', productid);
+    
     try {
         let deletecart = await cartCollection.findOne({ userId: req.session.user._id })
         deletecart.products = deletecart.products.filter((prod) => !prod._id.equals(productid))
-        console.log('cartproduct', deletecart);
+        
         await deletecart.save()
         res.json({ success: true });
     } catch (error) {

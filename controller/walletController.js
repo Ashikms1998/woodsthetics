@@ -21,20 +21,17 @@ exports.walletPost = async(req,res)=>{
         }else{
             let userid = req.session.user._id;
             let orderTotal = Number(req.body.orderTotal);
-            console.log(orderTotal,'ccceeen');
+            
             const walletCheck = await walletCollection.find({userid:userid});
             if(!walletCheck)
             {
                 return res.status(404).send({ message: "Wallet not found." });
             }else{
             let walletAmount = await walletCollection.findOne({ userid }, { balance: 1 });
-            console.log(walletAmount,'lelelelelele');
-            console.log(walletAmount.balance,'22lelelelelele');
-            console.log(orderTotal,'ccceeen');
             
             if(walletAmount.balance>=orderTotal)
             {
-                console.log(walletAmount,orderTotal);
+                
                 await walletCollection.findOneAndUpdate(
                     {userid:userid},
                     {$inc:{balance:-orderTotal}},

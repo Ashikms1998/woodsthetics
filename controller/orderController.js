@@ -292,7 +292,7 @@ exports.razorpayPost = async (req, res) => {
 
         // const totalPrice = prices.reduce((acc, price) => acc + price, 0);
         const totalPrice = orderTotal;
-        console.log(totalPrice);
+        
         var options = {
         amount:totalPrice*100 ,  // amount in the smallest currency unit
         currency: "INR",

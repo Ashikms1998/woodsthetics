@@ -133,7 +133,7 @@ exports.edituserPost = async (req, res) => {
 exports.editaddressPost = async (req, res) => {
     try {
         const addressid = req.params.id;
-        console.log(addressid);
+        
         const updateAddress = await addressCollection.findByIdAndUpdate(addressid, {
             address: req.body.address,
             city: req.body.city,
@@ -155,7 +155,7 @@ exports.editaddressPost = async (req, res) => {
 exports.deleteaddressPost = async (req, res) => {
     try {
         const addressid = req.params.id;
-        console.log('forDelete', addressid);
+        
         const deleteAddress = await addressCollection.findByIdAndDelete(addressid)
 
         res.redirect('/userprofile');
@@ -283,6 +283,6 @@ exports.userprofilePost = async (req, res) => {
 
 exports.filterCategoryGet = async (req, res) => {
     const categoryFilter = await categoryCollection.find()
-    console.log(categoryFilter);
+    
 };
 
